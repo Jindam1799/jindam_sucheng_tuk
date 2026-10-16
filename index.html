@@ -75,6 +75,9 @@ button:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-o
 .btn.primary{background:var(--seal);border-color:var(--seal);color:#fff}
 .btn.dark{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .btn:disabled{opacity:.5}
+.btn .two{display:flex;flex-direction:column;align-items:center;line-height:1.2;gap:2px}
+.btn .two small{font-size:14px;font-weight:700;opacity:.8}
+@media (max-width:640px){.tnav{grid-template-columns:1fr 1fr}.tnav #tk{grid-column:1/-1;order:-1}.tbar .seg button{padding:8px 10px;font-size:15px}}
 .credit{flex:none;margin:0;text-align:center;font-size:13.5px;color:var(--muted)}
 .credit b{color:var(--ink)}
 /* lesson page */
@@ -313,7 +316,7 @@ const L=LESSONS.map(l=>({
 }));
 const byN=n=>L.find(l=>l.n===n);
 // ---------- state ----------
-let S={xp:0,coins:0,best:{},level:'easy',sound:true};
+let S={xp:0,coins:0,best:{},sound:true};
 try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const lv=()=>Math.floor(Math.sqrt(S.xp/60))+1;
@@ -340,13 +343,14 @@ function speak(text,opt){
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
     u.lang=VOICE?VOICE.lang:'zh-CN';if(VOICE)u.voice=VOICE;
-    u.rate=opt.rate||(S.level==='hard'?1:.85);u.pitch=1.05;
+    u.rate=opt.rate||.85;u.pitch=1.05;
     let done=false;const fin=()=>{if(!done){done=true;opt.end&&opt.end()}};
     u.onend=fin;u.onerror=fin;setTimeout(fin,Math.max(2500,text.length*450));
     speechSynthesis.speak(u);
   }catch(e){opt.end&&opt.end()}
 }
 function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}}
+const inApp=/MicroMessenger|KAKAOTALK|QQ\/|Weibo|DingTalk|Line\//i.test(navigator.userAgent);
 // ---------- router ----------
 let cleanup=null;
 function go(fn,...args){if(cleanup){cleanup();cleanup=null}stopSpeak();$app.classList.remove('wide');fn(...args)}
@@ -373,16 +377,15 @@ function home(){
     <p>汉语口语速成 입문편(하) 16~30과 · 진담중국어 덩어리훈련™</p>
     <div class="flow">${STEP_NAMES.map((s,i)=>`<span>${i+1} ${s}</span>`).join('<i>→</i>')}</div>
   </section>
-  <div class="row" style="justify-content:space-between">
-    <div class="seg" role="group" aria-label="난이도"><button data-lv="easy" aria-pressed="${S.level==='easy'}">쉬운 모드</button><button data-lv="hard" aria-pressed="${S.level==='hard'}">어려운 모드</button></div>
+  <div class="row" style="justify-content:flex-end">
     <button class="pill" id="snd">${S.sound?'🔊 소리 켜짐':'🔇 소리 꺼짐'}</button>
   </div>
+  ${inApp?`<div class="banner"><b>소리가 안 나면</b> 오른쪽 위 ⋯ → 「브라우저로 열기」<br><b>没有声音？</b>点右上角 ⋯ →「在浏览器打开」</div>`:''}
   <div class="grid">${cards}</div>
   ${voiceTried&&!VOICE?'<div class="banner">이 기기에서 중국어 음성을 찾지 못했어요. 「선생님께」의 음성 안내를 확인해 주세요.</div>':''}
-  <div class="foot"><button class="btn dark" id="teach">📺 수업 모드</button><button class="btn" id="about">선생님께</button></div>
+  <div class="foot"><button class="btn dark" id="teach"><span class="two">📺 수업 모드<small>课堂模式</small></span></button><button class="btn" id="about"><span class="two">선생님께<small>老师说明</small></span></button></div>
   <p class="credit">기획·제작 <b>진담중국어</b> · 진심을 담은 중국어</p>`;
   $app.querySelectorAll('.lcard').forEach(b=>b.onclick=()=>go(lesson,+b.dataset.n));
-  $app.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{S.level=b.dataset.lv;save();home()});
   document.getElementById('snd').onclick=()=>{S.sound=!S.sound;save();home()};
   document.getElementById('teach').onclick=()=>go(teach,16,0);
   document.getElementById('about').onclick=()=>go(about);
@@ -408,7 +411,7 @@ function startStep(n,i){go([pairs,repeat,build,react][i],n)}
 function quiz(n,stepIdx,items,cfg){
   let queue=shuffle(items.map((_,i)=>i)),pos=0,first=new Set(),wrongOnce=new Set(),combo=0,maxCombo=0,gain=0,timerRAF=0,locked=false,alive=true;
   const total=items.length;
-  const limit=(S.level==='hard'?cfg.hard:cfg.easy)*1000;
+  const limit=cfg.sec*1000;
   function draw(){
     if(pos>=queue.length)return finish();
     locked=false;const it=items[queue[pos]];
@@ -468,23 +471,23 @@ function pairs(n){
     const blank=esc(c.zh).replace(esc(c.key),'<u>?</u>');
     return{key:c.key,options:opts,answer:opts.indexOf(c.key),sayAfter:c.zh,review:`${c.zh} · ${c.py} · ${c.ko}`,
       render:()=>`<div class="qcard"><div class="lab">① 짝꿍어휘 · 빈칸 채우기</div>
-        ${S.level==='easy'?'<button class="say" id="say" aria-label="듣기">🔊</button>':''}
+        <button class="say" id="say" aria-label="듣기">🔊</button>
         <div class="ko">${esc(c.ko)}</div><div class="big">${blank}</div>
         <div id="reveal" hidden><div class="pyl py">${esc(c.py)}</div></div></div>`}});
-  quiz(n,0,items,{easy:15,hard:8});
+  quiz(n,0,items,{sec:15});
 }
 // ---------- 4단계 즉시반응 ----------
 function react(n){
-  const l=byN(n);const hard=S.level==='hard';
+  const l=byN(n);
   const items=l.q.map((q,i)=>{
     const others=l.q.filter((_,j)=>j!==i).map(x=>x.a);
     const opts=shuffle([q.a,...sample(others,3)]);
     return{options:opts,answer:opts.indexOf(q.a),sayQ:q.q,sayAfter:q.a,review:`${q.q} → ${q.a} (${q.ako})`,
       render:()=>`<div class="qcard"><div class="lab">④ 즉시반응 · 듣고 바로 대답</div>
         <button class="say" id="say" aria-label="다시 듣기">🔊</button>
-        ${hard?'<div class="ko">🎧 질문을 듣고 대답을 고르세요</div>':`<div class="big mid">${esc(q.q)}</div><div class="pyl py">${esc(q.qpy)}</div>`}
-        <div id="reveal" hidden>${hard?`<div class="big mid">${esc(q.q)}</div>`:''}<div class="kol">${esc(q.qko)} → ${esc(q.ako)}</div></div></div>`}});
-  quiz(n,3,items,{easy:15,hard:8,one:true});
+        <div class="big mid">${esc(q.q)}</div><div class="pyl py">${esc(q.qpy)}</div>
+        <div id="reveal" hidden><div class="kol">${esc(q.qko)} → ${esc(q.ako)}</div></div></div>`}});
+  quiz(n,3,items,{sec:15,one:true});
 }
 // ---------- 2단계 입에 붙이기 ----------
 function repeat(n){
@@ -593,7 +596,7 @@ function reward(n,step,pct,xp,info){
   document.getElementById('nx').onclick=()=>{if(step<3)startStep(n,step+1);else if(n<30)go(lesson,n+1);else go(home)};
 }
 // ---------- 수업 모드 ----------
-const DECKS=['짝꿍어휘','문장','질문→대답','내 문장'];
+const DECKS=['짝꿍어휘 搭配','문장 句子','질문→대답 问答','내 문장 我的句子'];
 function teach(n,deck){
   $app.classList.add('wide');
   const l=byN(n);let order=[],i=0,phase=0,auto=false,shuf=false,cd=0,cdTimer=0;
@@ -608,17 +611,17 @@ function teach(n,deck){
     clearInterval(cdTimer);
     const it=order[i];
     $app.innerHTML=topbar(true)+`
-    <div class="tbar"><select id="ln" aria-label="과 선택">${L.map(x=>`<option value="${x.n}" ${x.n===n?'selected':''}>${x.n}과 ${esc(x.t)}</option>`).join('')}</select>
+    <div class="tbar"><select id="ln" aria-label="과 선택">${L.map(x=>`<option value="${x.n}" ${x.n===n?'selected':''}>${x.n}과 第${x.n}课 ${esc(x.t)}</option>`).join('')}</select>
     <div class="seg" role="group" aria-label="자료">${DECKS.map((d,k)=>`<button data-d="${k}" aria-pressed="${k===deck}">${d}</button>`).join('')}</div>
-    <button class="pill" id="au">${auto?'⏱ 3초 카운트 켜짐':'⏱ 3초 카운트 꺼짐'}</button><button class="pill" id="sh">${shuf?'🔀 섞기 켜짐':'🔀 순서대로'}</button></div>
+    <button class="pill" id="au">${auto?'⏱ 3초 카운트 켜짐 · 倒计时 开':'⏱ 3초 카운트 꺼짐 · 倒计时 关'}</button><button class="pill" id="sh">${shuf?'🔀 섞기 · 随机':'🔀 순서대로 · 顺序'}</button></div>
     <div class="tstage" id="st"><span class="tag">${esc(it.tag)}</span><span class="num">${i+1} / ${order.length}</span>
       ${it.pz?`<div class="tz" style="color:var(--ink)">${esc(it.p)}</div><div class="tp">${esc(it.ppy)}</div>`:`<div class="tk">${esc(it.p)}</div>`}
       ${it.frame?`<div class="tz" style="color:var(--seal)">${esc(it.frame)}</div>`:''}
       <div id="cd" class="count" ${phase===0&&auto?'':'hidden'}></div>
       <div id="rv" ${phase===1?'':'hidden'}><div class="tz" style="color:var(--jade)">${esc(it.z)}</div><div class="tp">${esc(it.py)}</div>${it.ko?`<div class="tp">${esc(it.ko)}</div>`:''}</div>
     </div>
-    <div class="tnav"><button class="btn" id="pv">◀ 이전</button><button class="btn primary" id="tk">${phase===0?'툭! 정답 공개':'다음 ▶'}</button><button class="btn" id="sp">🔊 듣기</button></div>
-    <p class="kbd">스페이스·→ 공개/다음 · ← 이전 · 학생들이 먼저 소리 내어 말한 뒤 공개하세요</p>`;
+    <div class="tnav"><button class="btn" id="pv">◀ 이전 上一个</button><button class="btn primary" id="tk">${phase===0?'툭! 정답 공개 · 显示答案':'다음 · 下一个 ▶'}</button><button class="btn" id="sp">🔊 듣기 · 听</button></div>
+    <p class="kbd">스페이스·→ 공개/다음 · ← 이전 · 학생들이 먼저 말한 뒤 공개하세요<br>空格键·→ 显示答案/下一个 · ← 上一个 · 请学生先说，再显示答案</p>`;
     bindBack(home);
     document.getElementById('ln').onchange=e=>go(teach,+e.target.value,deck);
     $app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>go(teach,n,+b.dataset.d));
@@ -640,10 +643,11 @@ function teach(n,deck){
   cleanup=()=>{document.removeEventListener('keydown',key);clearInterval(cdTimer)};
   build();draw();
 }
-// ---------- 선생님께 ----------
-function about(){
-  $app.innerHTML=topbar(true)+`<div class="fill"><div class="doc">
-  <h2>교수님, 이 게임은 이렇게 만들었습니다</h2>
+// ---------- 선생님께 / 老师说明 (이중 언어) ----------
+let aboutLang='ko';
+try{aboutLang=localStorage.getItem(KEY+'_lang')||'ko'}catch(e){}
+const ABOUT={
+ko:`<h2>교수님, 이 게임은 이렇게 만들었습니다</h2>
   <p>《汉语口语速成 입문편(하)》 16~30과를 배우는 학생들이 <b>배운 표현을 1초 안에 말로 꺼낼 수 있도록</b> 만든 수업 보조 게임입니다. 각 과의 단어와 문법 포인트를 그대로 따르고, 그 위에 진담중국어의 <b>덩어리훈련™ 4단계</b>를 얹었습니다.</p>
   <h3>덩어리훈련™ 4단계</h3>
   <ol><li><b>짝꿍어휘</b> — 단어를 혼자 외우지 않고, 함께 쓰이는 말과 한 덩어리로 익힙니다. (排队交钱, 买到票, 把空调关上)</li>
@@ -653,16 +657,48 @@ function about(){
   <h3>수업에서 이렇게 써 보세요</h3>
   <ul><li><b>수업 시작 5분</b> — 수업 모드 「짝꿍어휘」를 띄우고, 한국어를 보면 반 전체가 중국어로 말합니다.</li>
   <li><b>문법 설명 직후</b> — 수업 모드 「문장」으로 한국어 → 중국어 바꿔 말하기를 합니다.</li>
-  <li><b>회화 연습</b> — 「질문→대답」은 교수님이 질문을 읽고 학생이 바로 대답하는 형식으로 씁니다.</li>
+  <li><b>회화 연습</b> — 「질문→대답」은 선생님이 질문을 읽고 학생이 바로 대답하는 형식으로 씁니다.</li>
   <li><b>복습 숙제</b> — 학생들이 휴대폰으로 각 과의 4단계를 끝내고 도장 4개를 모아 옵니다.</li></ul>
   <h3>중국에서 사용할 때</h3>
-  <ul><li>한 번 열어 두면 인터넷이 없어도 실행됩니다. 휴대폰에서 「홈 화면에 추가」하면 앱처럼 쓸 수 있습니다.</li>
-  <li>발음은 기기에 내장된 중국어 음성으로 나옵니다. 아이폰은 기본 탑재(Tingting)되어 있고, 갤럭시는 출국 전 <b>설정 → 일반 → 텍스트 음성 변환</b>에서 중국어 음성 데이터를 받아 두면 좋습니다.</li>
+  <ul><li>크롬이 없어도 됩니다. 아이폰은 사파리, 갤럭시는 삼성 인터넷, 노트북은 엣지 등 어떤 브라우저로도 열립니다.</li>
+  <li>위챗·카카오톡 안에서 열면 소리가 안 날 수 있습니다. 오른쪽 위 ⋯ → 「브라우저로 열기」를 눌러 주세요.</li>
+  <li>한 번 열어 두면 인터넷이 없어도 실행됩니다. 「홈 화면에 추가」하면 앱처럼 쓸 수 있습니다.</li>
+  <li>발음은 기기에 내장된 중국어 음성으로 나옵니다. 갤럭시는 출국 전 <b>설정 → 일반 → 텍스트 음성 변환</b>에서 중국어 음성 데이터를 받아 두면 좋습니다.</li>
   <li>학습 기록과 도장은 각자의 휴대폰에 저장됩니다.</li></ul>
   <p style="font-size:15px;color:var(--muted)">단어와 문법 범위는 《汉语口语速成 입문편(하)》 각 과를 기준으로 했고, 짝꿍어휘·예문·질문은 말하기 연습을 위해 진담중국어가 새로 만들었습니다. 교재 출판사와 관계없는 비공식 수업 보조 자료입니다.</p>
-  <div class="sig"><b>진담중국어</b> · 진심을 담은 중국어<br>아웃풋에 진심, 배운 중국어가 1초 안에 툭!<br>기획·제작 전진아 (중국어교육 석사)</div>
-  </div></div>`;
+  <div class="sig"><b>진담중국어</b> · 진심을 담은 중국어<br>아웃풋에 진심, 배운 중국어가 1초 안에 툭!<br>기획·제작 전진아 (중국어교육 석사)</div>`,
+zh:`<h2>老师使用说明</h2>
+  <p>这是配合《汉语口语速成·入门篇(下)》第16–30课的口语练习游戏。目标只有一个：<b>学生学过的中文，一秒钟内说出来。</b>每课的词汇和语法与教材一致，练习方法采用진담중국어（Jindam Chinese）的<b>“词块训练™”四个步骤</b>。学生是韩国人，所以题目里的意思用韩语表示。</p>
+  <h3>四个步骤</h3>
+  <ol><li><b>搭配词</b>（짝꿍어휘）— 看韩语意思，选出空格里的词。不单记一个词，而是把常用搭配记成一块。（排队交钱、买到票、把空调关上）</li>
+  <li><b>说顺口</b>（입에 붙이기）— 每个词块说三遍：听了跟读 → 只看汉字说 → 只看韩语意思说。</li>
+  <li><b>我的句子</b>（내 문장）— 把词块排成正确的句子，然后换成自己的情况说一说。</li>
+  <li><b>即时反应</b>（즉시반응）— 听问题，在15秒内选出合适的回答。回答得快有“툭!”奖励。</li></ol>
+  <h3>课堂模式怎么用</h3>
+  <ol><li>在首页点 <b>“📺 수업 모드 · 课堂模式”</b>，电脑连接投影仪。</li>
+  <li>上方选择课数（第16课…第30课）和内容：<b>搭配 / 句子 / 问答 / 我的句子</b>。</li>
+  <li>屏幕先出现韩语意思（问答是中文问题）。请全班<b>先用中文说出来</b>，再按 <b>“显示答案”</b>。</li>
+  <li>键盘：<b>空格键</b>或<b>→</b> 显示答案/下一个，<b>←</b> 上一个。点 <b>“🔊 听”</b> 播放发音。</li>
+  <li>打开 <b>“倒计时”</b>，3秒后自动显示答案。<b>“随机”</b>可以打乱顺序。</li></ol>
+  <h3>上课建议</h3>
+  <ul><li><b>上课前5分钟</b>：用“搭配”热身，学生看韩语马上说中文。</li>
+  <li><b>讲完语法以后</b>：用“句子”做韩译中口头练习。</li>
+  <li><b>会话练习</b>：用“问答”，老师提问，学生马上回答。</li>
+  <li><b>课后作业</b>：学生用手机完成每课四个步骤，集齐4个印章。</li></ul>
+  <h3>在中国使用</h3>
+  <ul><li>不需要Chrome。iPhone用Safari，三星手机用三星浏览器，电脑用Edge等，任何浏览器都可以打开。</li>
+  <li>在微信或KakaoTalk里打开可能没有声音，请点右上角 ⋯ → “在浏览器打开”。</li>
+  <li>第一次打开以后，没有网络也能使用。可以“添加到主屏幕”，像App一样使用。</li>
+  <li>发音使用手机或电脑自带的中文语音。如果没有声音，请在系统设置里下载中文语音。</li>
+  <li>学习记录保存在学生各自的手机里。</li></ul>
+  <p style="font-size:15px;color:var(--muted)">词汇和语法范围依据教材各课；搭配、例句和问题由진담중국어为口语练习编写。本资料与出版社无关，是非官方的课堂辅助材料。</p>
+  <div class="sig"><b>진담중국어 · Jindam Chinese</b><br>学过的中文，一秒说出来！<br>策划·制作：전진아 Jina老师（中文教育硕士）</div>`};
+function about(){
+  $app.innerHTML=topbar(true)+`<div class="row"><div class="seg" role="group" aria-label="언어 语言">
+    <button data-lang="ko" aria-pressed="${aboutLang==='ko'}">한국어</button><button data-lang="zh" aria-pressed="${aboutLang==='zh'}">中文</button></div></div>
+  <div class="fill"><div class="doc" lang="${aboutLang==='zh'?'zh-CN':'ko'}">${ABOUT[aboutLang]}</div></div>`;
   bindBack(home);
+  $app.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{aboutLang=b.dataset.lang;try{localStorage.setItem(KEY+'_lang',aboutLang)}catch(e){}about()});
 }
 // ---------- boot ----------
 go(home);
