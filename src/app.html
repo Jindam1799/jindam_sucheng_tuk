@@ -113,6 +113,8 @@ button:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-o
 .shake{animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
 .spacer{flex:1}
+[hidden]{display:none!important}
+.mask{display:inline-block;padding:4px 22px;border-radius:14px;background:var(--surface2);border:2px dashed var(--line);color:var(--muted);letter-spacing:.2em}
 /* 입에 붙이기 */
 .reps{display:flex;justify-content:center;gap:10px;margin-top:14px}
 .reps span{width:40px;height:10px;border-radius:5px;background:var(--line)}
@@ -389,20 +391,21 @@ function repeat(n){
       <div class="fill"><div class="qcard"><div class="lab">② 입에 붙이기 · ${r+1}번째</div>
       <button class="say" id="say" aria-label="듣기">🔊</button>
       <div class="ko">${esc(c.ko)}</div>
-      <div class="big" id="zh" ${hide?'hidden':''}>${esc(c.zh)}</div>
-      <div class="pyl py" id="py" ${r>0?'hidden':''}>${esc(c.py)}</div>
+      <div class="big" id="zh">${hide?'<span class="mask">？ ？ ？</span>':esc(c.zh)}</div>
+      <div class="pyl py" id="py">${r>0?'':esc(c.py)}</div>
       <div class="reps">${[0,1,2].map(k=>`<span class="${k<r?'on':''}"></span>`).join('')}</div></div>
       <p class="hint"><b>${REP[r]}</b><br>${r===0?'소리를 듣고 그대로 따라 말해 보세요.':r===1?'병음을 가렸어요. 한자를 보며 소리 내어 말해요.':'중국어를 가렸어요. 뜻만 보고 먼저 말한 뒤 확인해요.'}</p>
       <div class="spacer"></div>
       <div class="ctrls"><button class="btn" id="slow">🐢 천천히</button><button class="btn" id="peek">${hide?'정답 보기':'병음 보기'}</button>
       <button class="btn primary wide" id="ok">${hide?'말했어요 · 확인 ▶':'따라 말했어요 ▶'}</button></div></div>`;
     document.getElementById('bk').onclick=()=>go(lesson,n);
-    document.getElementById('say').onclick=()=>speak(c.zh);
-    document.getElementById('slow').onclick=()=>speak(c.zh,{rate:.55});
     let revealed=!hide;
-    const reveal=()=>{revealed=true;document.getElementById('zh').hidden=false;document.getElementById('py').hidden=false;speak(c.zh);
+    document.getElementById('say').onclick=()=>{if(revealed)speak(c.zh)};
+    document.getElementById('slow').onclick=()=>{if(revealed)speak(c.zh,{rate:.55})};
+    const showPy=()=>{document.getElementById('py').textContent=c.py};
+    const reveal=()=>{revealed=true;document.getElementById('zh').textContent=c.zh;showPy();speak(c.zh);
       if(hide)document.getElementById('ok').textContent='다음 덩어리 ▶'};
-    document.getElementById('peek').onclick=()=>{if(hide)reveal();else document.getElementById('py').hidden=false};
+    document.getElementById('peek').onclick=()=>{if(hide)reveal();else showPy()};
     document.getElementById('ok').onclick=()=>{
       if(!revealed){reveal();burst('툭!');return}
       r++;if(r>2){r=0;i++}draw()};
