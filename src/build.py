@@ -1,6 +1,6 @@
 import re,os,json,hashlib
 app=open('app.html',encoding='utf-8').read()
-data=open('data.js',encoding='utf-8').read()
+data=open('data.js',encoding='utf-8').read()+'\n'+open('vocab.js',encoding='utf-8').read()
 art=app.replace('/*__DATA__*/',data)
 open('dist_artifact.html','w',encoding='utf-8').write(art)
 m=re.match(r'(<title>.*?</title>)\s*<meta name="claude:viewport-fit-sides" content="cover">\s*(<style>.*?</style>)(.*)',art,re.S)

@@ -254,6 +254,24 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 }
 @media (max-height:660px){.iseal{display:none}.ibook{font-size:13.5px}.gdot li{padding:5px 9px!important}}
 @media (max-height:700px){.iseal{width:72px;height:72px;font-size:26px}.ilead{font-size:19px}.maker b{font-size:22px}.intro{gap:9px}.sheet-b{padding:16px}.gsteps div{padding:8px 10px}.gdot li{padding:8px 10px;font-size:15px}.gnum li p{font-size:15px}.guse div{padding:8px 10px}.glead{font-size:16px}}
+/* 단어장 */
+.vsheet{max-width:600px;height:100%}
+.vctl{flex:none;display:grid;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
+#vsel{display:grid;gap:8px}
+#vq{font:inherit;font-size:17px;padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);width:100%;user-select:text;-webkit-user-select:text}
+#vq:focus{outline:3px solid var(--sun);outline-offset:1px}
+.vlist{padding:10px 12px!important;display:flex;flex-direction:column;gap:6px}
+.vrow{display:grid;grid-template-columns:1fr auto;grid-template-areas:"z b" "k b";column-gap:10px;row-gap:2px;align-items:center;text-align:left;padding:9px 12px;border-radius:14px;border:1px solid var(--line);background:var(--surface);width:100%}
+.vrow.hit{border-color:var(--jade);background:var(--jade-soft)}
+.vz{grid-area:z;font-family:var(--f-zh);font-size:22px;font-weight:700;line-height:1.35}
+.vp{font-style:normal;font-family:var(--f-py);color:var(--muted);font-size:15px;font-weight:500;margin-left:4px;white-space:nowrap}
+.vk{grid-area:k;font-size:16px;line-height:1.35}
+.vb{grid-area:b;font-size:12.5px;font-weight:800;padding:3px 8px;border-radius:8px;background:var(--jade-soft);color:var(--jade);white-space:nowrap;max-width:12em;overflow:hidden;text-overflow:ellipsis}
+.vb.add{background:var(--seal-soft);color:var(--seal)}
+.vnote{margin:2px 2px 4px;font-size:14.5px;color:var(--muted);line-height:1.5}
+.vnote.warn{padding:10px 12px;border-radius:12px;background:var(--seal-soft);color:var(--ink)}
+.vt{font-size:19px}
+.gtabs small{font-weight:700;opacity:.7}
 /* 선생님께 */
 .doc{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:20px;user-select:text;-webkit-user-select:text}
 .doc h2{margin:0 0 8px;font-size:22px;line-height:1.35}
@@ -337,7 +355,7 @@ const $app=document.getElementById('app');
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
 let lastTouch=0;
-document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouch<320&&!e.target.closest('button,select'))e.preventDefault();lastTouch=now},{passive:false});
+document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouch<320&&!e.target.closest('button,select,input'))e.preventDefault();lastTouch=now},{passive:false});
 document.addEventListener('dblclick',e=>e.preventDefault());
 // ---------- data ----------
 const L=LESSONS.map(l=>({
@@ -390,13 +408,13 @@ function go(fn,...args){if(cleanup){cleanup();cleanup=null}stopSpeak();$app.clas
 function topbar(back){
   return `<div class="bar">${back?'<button class="back" id="bk" aria-label="뒤로">←</button>':''}
   <div class="logo">덩어리 <b>툭!</b><small>速成·入门下</small></div>
-  <div class="stats"><button class="pill snd" id="snd" aria-label="소리 켜기/끄기">${S.sound?'🔊':'🔇'}</button>${reRender?`<button class="pill lang" id="lng">${U().langBtn}</button>`:''}</div></div>`;
+  <div class="stats"><button class="pill snd vbtn" data-voc="1" aria-label="단어장">📖</button><button class="pill snd" id="snd" aria-label="소리 켜기/끄기">${S.sound?'🔊':'🔇'}</button>${reRender?`<button class="pill lang" id="lng">${U().langBtn}</button>`:''}</div></div>`;
 }
 function bindBack(fn){const b=document.getElementById('bk');if(b)b.onclick=()=>go(fn)}
-document.addEventListener('click',e=>{if(e.target.closest('#lng')&&reRender){setLang(LANG==='ko'?'zh':'ko');const f=reRender;f();return}const b=e.target.closest('#snd');if(!b)return;S.sound=!S.sound;save();if(!S.sound)stopSpeak();b.textContent=S.sound?'🔊':'🔇'});
+document.addEventListener('click',e=>{if(e.target.closest('[data-voc]')){openVocab();return}if(e.target.closest('#lng')&&reRender){setLang(LANG==='ko'?'zh':'ko');const f=reRender;f();return}const b=e.target.closest('#snd');if(!b)return;S.sound=!S.sound;save();if(!S.sound)stopSpeak();b.textContent=S.sound?'🔊':'🔇'});
 function playtop(label,width){
   return `<div class="playtop"><button class="back" id="bk" aria-label="그만하기">✕</button>
-    <div class="prog"><i style="width:${width}%"></i></div><span class="combo">${label}</span></div>`;
+    <div class="prog"><i style="width:${width}%"></i></div><span class="combo">${label}</span><button class="pill snd vbtn" data-voc="1" aria-label="단어장">📖</button></div>`;
 }
 // ---------- HOME ----------
 function stepsDone(n){return [0,1,2,3].map(i=>(S.best[n+'-'+i]||0)>=80)}
@@ -419,7 +437,7 @@ function home(){
 }
 // ---------- LESSON ----------
 function lesson(n){
-  reRender=()=>lesson(n);
+  curLesson=n;reRender=()=>lesson(n);
   const l=byN(n);
   $app.innerHTML=topbar(true)+`
   <div class="lhead"><div class="k">第 ${n} 课</div><h1>${esc(l.t)}</h1>${LANG==='ko'?`<p>${esc(l.ko)}</p>`:''}
@@ -434,7 +452,7 @@ function lesson(n){
   document.getElementById('next').onclick=()=>{const i=[0,1,2,3].find(i=>(S.best[n+'-'+i]||0)<80);startStep(n,i==null?3:i)};
 }
 function nextLabel(n){const i=[0,1,2,3].find(i=>(S.best[n+'-'+i]||0)<80);return i==null?U().again3:U().startStep(i+1)}
-function startStep(n,i){go([pairs,repeat,build,react][i],n)}
+function startStep(n,i){curLesson=n;go([pairs,repeat,build,react][i],n)}
 // ---------- 공통: 퀴즈 엔진 (1·4단계) ----------
 function quiz(n,stepIdx,items,cfg){
   let queue=shuffle(items.map((_,i)=>i)),pos=0,first=new Set(),wrongOnce=new Set(),combo=0,maxCombo=0,gain=0,timerRAF=0,locked=false,alive=true;
@@ -452,8 +470,8 @@ function quiz(n,stepIdx,items,cfg){
     const sb=document.getElementById('say');if(sb)sb.onclick=()=>speak(it.sayQ||it.sayAfter);
     $app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(+b.dataset.k));
     if(it.sayQ)setTimeout(()=>{if(alive)speak(it.sayQ)},250);
-    const t0=performance.now();const bar=document.getElementById('tm');
-    const tick=now=>{const r=1-(now-t0)/limit;bar.style.transform=`scaleX(${Math.max(0,r)})`;
+    let t0=performance.now(),lastF=t0;const bar=document.getElementById('tm');
+    const tick=now=>{if(document.getElementById('voc')||document.getElementById('modal'))t0+=now-lastF;lastF=now;it._t0=t0;const r=1-(now-t0)/limit;bar.style.transform=`scaleX(${Math.max(0,r)})`;
       if(r<=0){choose(-1);return}timerRAF=requestAnimationFrame(tick)};
     timerRAF=requestAnimationFrame(tick);
     it._t0=t0;
@@ -628,6 +646,7 @@ function reward(n,step,pct,xp,info){
 }
 // ---------- 수업 모드 ----------
 function teach(n,deck){
+  curLesson=n;
   $app.classList.add('wide');
   const l=byN(n);let order=[],i=0,phase=0,auto=false,shuf=false,cd=0,cdTimer=0;
   function build(){
@@ -669,7 +688,7 @@ function teach(n,deck){
   }
   function advance(){if(phase===0){phase=1;draw();speak(order[i].z);burst('툭!')}else{if(i<order.length-1){i++;phase=0;draw()}}}
   function prev(){if(phase===1){phase=0}else if(i>0){i--;phase=0}draw()}
-  const key=e=>{if(e.target.tagName==='SELECT')return;if(e.key===' '||e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();advance()}else if(e.key==='ArrowLeft'){e.preventDefault();prev()}};
+  const key=e=>{if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT'||document.getElementById('voc'))return;if(e.key===' '||e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();advance()}else if(e.key==='ArrowLeft'){e.preventDefault();prev()}};
   document.addEventListener('keydown',key);
   cleanup=()=>{document.removeEventListener('keydown',key);clearInterval(cdTimer)};
   build();draw();
@@ -698,7 +717,7 @@ ko:{tabs:['4단계','수업 모드','중국에서'],
     use:[['수업 시작 5분','짝꿍어휘 입 풀기'],['문법 설명 후','문장 바꿔 말하기'],['회화 시간','질문→대답'],['복습 숙제','휴대폰 4단계']]},
   p3:{h:'중국에서 사용할 때',
     list:['크롬이 없어도 돼요. 사파리·삼성 인터넷·엣지 모두 OK','위챗·카톡에서 소리가 안 나면 ⋯ → 「브라우저로 열기」','한 번 열면 인터넷 없이도 실행, 「홈 화면에 추가」 가능','소리가 없으면 설정에서 중국어 음성 다운로드'],
-    note:'저작권 보호를 위해 교재 본문을 그대로 싣지 않고, 같은 단어와 문법으로 문장을 조금씩 바꿔 만들었습니다. 출판사와 무관한 비공식 수업 보조 자료입니다.',
+    note:'저작권 보호를 위해 교재 본문을 그대로 싣지 않고, 같은 단어와 문법으로 문장을 조금씩 바꿔 만들었습니다. 달라진 단어는 📖 단어장의 「추가 단어」에서 확인하세요. 출판사와 무관한 비공식 자료입니다.',
     sig:'<span class="nw"><b>吴迪</b> 선생님</span> × <span class="nw"><b>진담중국어 전진아</b> 선생님</span>'}},
 zh:{tabs:['四个步骤','课堂模式','在中国使用'],
   p1:{lead:'配合《汉语口语速成·入门篇(下)》第16–30课<br><b>学过的中文，一秒说出来！</b>',
@@ -709,7 +728,7 @@ zh:{tabs:['四个步骤','课堂模式','在中国使用'],
     use:[['课前5分钟','搭配热身'],['讲完语法','句子练习'],['会话练习','问答'],['课后作业','手机完成四步']]},
   p3:{h:'在中国使用',
     list:['不需要Chrome，Safari、三星浏览器、Edge都可以','微信里没有声音：点 ⋯ →“在浏览器打开”','打开一次后，没有网络也能用，可“添加到主屏幕”','没有声音时，请在系统设置里下载中文语音'],
-    note:'为保护教材版权，本游戏没有直接使用课文原文，而是用相同的词汇和语法对句子做了修改。本资料与出版社无关，是非官方课堂辅助材料。',
+    note:'为保护教材版权，本游戏没有直接使用课文原文，而是用相同的词汇和语法对句子做了修改。新增的词语请在 📖 词汇表的“新增词语”里查看。本资料与出版社无关，是非官方材料。',
     sig:'<span class="nw"><b>吴迪老师</b></span> × <span class="nw"><b>진담중국어 전진아老师</b></span>'}}};
 let guidePage=0;
 function openModal(view){
@@ -752,6 +771,59 @@ function openModal(view){
   paint();
 }
 function about(){openModal('guide')}
+// ---------- 📖 단어장 / 词汇表 ----------
+const VB={},VE={};
+for(const k in BOOK_VOCAB)VB[k]=BOOK_VOCAB[k].split(';').map(x=>{const a=x.split('|');return{zh:a[0],py:a[1],ko:a[2]}});
+for(const k in EXTRA_VOCAB)VE[k]=EXTRA_VOCAB[k].split(';').map(x=>{const a=x.split('|');return{zh:a[0],py:a[1],ko:a[2],note:a[3]||''}});
+const VUI={
+ko:{title:'📖 단어장',search:'한자 · 병음 · 뜻으로 검색',tabs:['덩어리','교재 단어','추가 단어'],
+  notes:['게임 1·2단계에서 연습하는 짝꿍어휘 덩어리예요. 누르면 발음을 들을 수 있어요.','교재 이 과의 「새로 나온 단어」예요. 누르면 발음을 들을 수 있어요.','게임 문장은 저작권 때문에 교재 본문과 다르게 만들었어요. 아래는 교재 이 과 단어장에 없고 게임에서 새로 쓴 단어예요.'],
+  added:'추가',none:'찾는 단어가 없어요.',result:n=>`검색 결과 ${n}개`,lesson:n=>`${n}과`},
+zh:{title:'📖 词汇表',search:'用汉字、拼音、韩语搜索',tabs:['词块','教材生词','新增词语'],
+  notes:['第1、2步练习的搭配词块。点一下可以听发音。','本课教材的“生词”。点一下可以听发音。','因为版权原因，游戏句子和课文不一样。下面是本课生词表里没有、游戏中新用的词语。'],
+  added:'新增',none:'没有找到。',result:n=>`找到 ${n} 个`,lesson:n=>`第${n}课`}};
+const V=()=>VUI[LANG];
+const plain=x=>String(x).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[\s·・,，.()（）…\-']/g,'').toLowerCase();
+let curLesson=16,vocTab=0;
+function vocLists(k){const l=byN(k);return [l.c.map(c=>({zh:c.zh,py:c.py,ko:c.ko})),VB[k],VE[k].map(w=>({...w,badge:w.note||V().added,bcls:'add'}))]}
+function vocRows(list){return list.map(w=>`<button class="vrow" data-say="${esc(w.zh.replace(/\(|\)|……|…/g,''))}"><span class="vz">${esc(w.zh)} <em class="vp">${esc(w.py)}</em></span><span class="vk">${esc(w.ko)}</span>${w.badge?`<span class="vb ${w.bcls||''}">${esc(w.badge)}</span>`:''}</button>`).join('')}
+function openVocab(){
+  if(document.getElementById('voc'))return;
+  const v=document.createElement('div');v.id='voc';v.className='modal';v.setAttribute('role','dialog');v.setAttribute('aria-modal','true');document.body.appendChild(v);
+  let n=curLesson,q='';
+  const close=()=>{v.remove();document.removeEventListener('keydown',onKey)};
+  const onKey=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',onKey);
+  const u=V();
+  v.innerHTML=`<div class="sheet vsheet"><div class="sheet-h"><b class="vt">${u.title}</b><button class="pill" id="vx" aria-label="닫기">✕</button></div>
+    <div class="vctl"><input id="vq" type="search" enterkeyhint="search" placeholder="${u.search}" autocomplete="off">
+    <div id="vsel"><select id="vl" aria-label="과">${L.map(x=>`<option value="${x.n}" ${x.n===n?'selected':''}>${u.lesson(x.n)} ${esc(x.t)}</option>`).join('')}</select>
+    <div class="gtabs" id="vtabs"></div></div></div>
+    <div class="sheet-b vlist" id="vlist"></div></div>`;
+  const $l=v.querySelector('#vlist'),$t=v.querySelector('#vtabs'),$s=v.querySelector('#vsel');
+  function list(){
+    if(q.trim()){
+      $s.hidden=true;const p=plain(q);const res=[];
+      for(const l of L){const [a,b,c]=vocLists(l.n);
+        a.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.tabs[0]}));
+        b.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.tabs[1]}));
+        c.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.added+(w.note?' ('+w.note+')':''),bcls:'add'}))}
+      const hit=res.filter(w=>plain(w.zh).includes(p)||plain(w.py).includes(p)||plain(w.ko).includes(p));
+      $l.innerHTML=`<p class="vnote">${hit.length?u.result(hit.length):u.none}</p>`+vocRows(hit.slice(0,150));
+    }else{
+      $s.hidden=false;const ls=vocLists(n);
+      $t.innerHTML=u.tabs.map((t,i)=>`<button data-vt="${i}" aria-selected="${i===vocTab}">${t} <small>${ls[i].length}</small></button>`).join('');
+      $l.innerHTML=`<p class="vnote ${vocTab===2?'warn':''}">${u.notes[vocTab]}</p>`+vocRows(ls[vocTab]);
+    }
+    $l.scrollTop=0;
+  }
+  v.querySelector('#vx').onclick=close;
+  v.addEventListener('click',e=>{if(e.target===v)close()});
+  v.querySelector('#vq').addEventListener('input',e=>{q=e.target.value;list()});
+  v.querySelector('#vl').onchange=e=>{n=+e.target.value;list()};
+  $t.addEventListener('click',e=>{const b=e.target.closest('[data-vt]');if(b){vocTab=+b.dataset.vt;list()}});
+  $l.addEventListener('click',e=>{const r=e.target.closest('.vrow');if(r){speak(r.dataset.say);r.classList.add('hit');setTimeout(()=>r.classList.remove('hit'),400)}});
+  list();
+}
 // ---------- boot ----------
 go(home);
 openModal('intro');
