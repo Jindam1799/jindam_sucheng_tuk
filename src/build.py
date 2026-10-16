@@ -28,7 +28,7 @@ def page(with_pwa):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#11291F">
+<meta name="theme-color" content="#FF6F91">
 {title}
 {pwa if with_pwa else ''}
 <style>:root{{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}}body{{margin:0}}[hidden]{{display:none!important}}</style>
@@ -44,7 +44,7 @@ open('index.html','w',encoding='utf-8').write(page(False))          # 오프라�
 open('site/index.html','w',encoding='utf-8').write(page(True))      # GitHub Pages용
 open('site/manifest.webmanifest','w',encoding='utf-8').write(json.dumps({
  "name":"덩어리 툭! 速成 入门下","short_name":"덩어리 툭","start_url":"./","scope":"./","display":"standalone",
- "orientation":"portrait","background_color":"#EDF3EF","theme_color":"#11291F","lang":"ko",
+ "orientation":"portrait","background_color":"#FFFBF8","theme_color":"#FF6F91","lang":"ko",
  "icons":[{"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
           {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
           {"src":"icons/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]},ensure_ascii=False,indent=1))
