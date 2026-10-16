@@ -776,16 +776,16 @@ const VB={},VE={};
 for(const k in BOOK_VOCAB)VB[k]=BOOK_VOCAB[k].split(';').map(x=>{const a=x.split('|');return{zh:a[0],py:a[1],ko:a[2]}});
 for(const k in EXTRA_VOCAB)VE[k]=EXTRA_VOCAB[k].split(';').map(x=>{const a=x.split('|');return{zh:a[0],py:a[1],ko:a[2],note:a[3]||''}});
 const VUI={
-ko:{title:'📖 단어장',search:'한자 · 병음 · 뜻으로 검색',tabs:['덩어리','교재 단어','추가 단어'],
-  notes:['게임 1·2단계에서 연습하는 짝꿍어휘 덩어리예요. 누르면 발음을 들을 수 있어요.','교재 이 과의 「새로 나온 단어」예요. 누르면 발음을 들을 수 있어요.','게임 문장은 저작권 때문에 교재 본문과 다르게 만들었어요. 아래는 교재 이 과 단어장에 없고 게임에서 새로 쓴 단어예요.'],
+ko:{title:'📖 단어장',search:'한자 · 병음 · 뜻으로 검색',tabs:['교재 단어','추가 단어','짝꿍어휘'],
+  notes:['교재 이 과의 「새로 나온 단어」예요. 누르면 발음을 들을 수 있어요.','게임 문장은 저작권 때문에 교재 본문과 다르게 만들었어요. 아래는 교재 이 과 단어장에 없고 게임에서 새로 쓴 단어예요.','게임 1·2단계에서 연습하는 짝꿍어휘 덩어리예요. 누르면 발음을 들을 수 있어요.'],
   added:'추가',none:'찾는 단어가 없어요.',result:n=>`검색 결과 ${n}개`,lesson:n=>`${n}과`},
-zh:{title:'📖 词汇表',search:'用汉字、拼音、韩语搜索',tabs:['词块','教材生词','新增词语'],
-  notes:['第1、2步练习的搭配词块。点一下可以听发音。','本课教材的“生词”。点一下可以听发音。','因为版权原因，游戏句子和课文不一样。下面是本课生词表里没有、游戏中新用的词语。'],
+zh:{title:'📖 词汇表',search:'用汉字、拼音、韩语搜索',tabs:['教材生词','新增词语','搭配词'],
+  notes:['本课教材的“生词”。点一下可以听发音。','因为版权原因，游戏句子和课文不一样。下面是本课生词表里没有、游戏中新用的词语。','第1、2步练习的搭配词块。点一下可以听发音。'],
   added:'新增',none:'没有找到。',result:n=>`找到 ${n} 个`,lesson:n=>`第${n}课`}};
 const V=()=>VUI[LANG];
 const plain=x=>String(x).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[\s·・,，.()（）…\-']/g,'').toLowerCase();
 let curLesson=16,vocTab=0;
-function vocLists(k){const l=byN(k);return [l.c.map(c=>({zh:c.zh,py:c.py,ko:c.ko})),VB[k],VE[k].map(w=>({...w,badge:w.note||V().added,bcls:'add'}))]}
+function vocLists(k){const l=byN(k);return [VB[k],VE[k].map(w=>({...w,badge:w.note||V().added,bcls:'add'})),l.c.map(c=>({zh:c.zh,py:c.py,ko:c.ko}))]}
 function vocRows(list){return list.map(w=>`<button class="vrow" data-say="${esc(w.zh.replace(/\(|\)|……|…/g,''))}"><span class="vz">${esc(w.zh)} <em class="vp">${esc(w.py)}</em></span><span class="vk">${esc(w.ko)}</span>${w.badge?`<span class="vb ${w.bcls||''}">${esc(w.badge)}</span>`:''}</button>`).join('')}
 function openVocab(){
   if(document.getElementById('voc'))return;
@@ -805,14 +805,14 @@ function openVocab(){
       $s.hidden=true;const p=plain(q);const res=[];
       for(const l of L){const [a,b,c]=vocLists(l.n);
         a.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.tabs[0]}));
-        b.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.tabs[1]}));
-        c.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.added+(w.note?' ('+w.note+')':''),bcls:'add'}))}
+        b.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.added+(w.note?' ('+w.note+')':''),bcls:'add'}));
+        c.forEach(w=>res.push({...w,badge:u.lesson(l.n)+' · '+u.tabs[2]}))}
       const hit=res.filter(w=>plain(w.zh).includes(p)||plain(w.py).includes(p)||plain(w.ko).includes(p));
       $l.innerHTML=`<p class="vnote">${hit.length?u.result(hit.length):u.none}</p>`+vocRows(hit.slice(0,150));
     }else{
       $s.hidden=false;const ls=vocLists(n);
       $t.innerHTML=u.tabs.map((t,i)=>`<button data-vt="${i}" aria-selected="${i===vocTab}">${t} <small>${ls[i].length}</small></button>`).join('');
-      $l.innerHTML=`<p class="vnote ${vocTab===2?'warn':''}">${u.notes[vocTab]}</p>`+vocRows(ls[vocTab]);
+      $l.innerHTML=`<p class="vnote ${vocTab===1?'warn':''}">${u.notes[vocTab]}</p>`+vocRows(ls[vocTab]);
     }
     $l.scrollTop=0;
   }
