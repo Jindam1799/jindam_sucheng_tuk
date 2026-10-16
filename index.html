@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#11291F">
+<title>速成 덩어리 툭!</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="덩어리 툭">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<style>
+/* 레이아웃: 한 화면 고정 앱(페이지 스크롤·확대 없음), 큰 글씨·큰 버튼(성인 학습자용). 수업 모드는 프로젝터용 와이드. 외부 리소스 0 */
+:root{
+  --bg:#EDF3EF; --surface:#FFFFFF; --surface2:#F4F8F5; --ink:#11291F; --muted:#4A5E57; --line:#C9D8D0;
+  --jade:#1A7F60; --jade-soft:#DCF0E6; --seal:#D9471F; --seal-soft:#FBE4DB; --sun:#FFC53D; --bad:#B8344D; --bad-soft:#F8DFE5;
+  --f-ko:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --f-zh:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Noto Sans CJK SC","Source Han Sans SC",sans-serif;
+  --f-py:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1A17; --surface:#16251F; --surface2:#1B2D27; --ink:#EEF5F1; --muted:#B0C4BC; --line:#31473F;
+  --jade:#46D0A2; --jade-soft:#173A2F; --seal:#FF6E4B; --seal-soft:#3A211A; --sun:#FFC53D; --bad:#FF8599; --bad-soft:#3A1C24; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1A17; --surface:#16251F; --surface2:#1B2D27; --ink:#EEF5F1; --muted:#B0C4BC; --line:#31473F;
+  --jade:#46D0A2; --jade-soft:#173A2F; --seal:#FF6E4B; --seal-soft:#3A211A; --sun:#FFC53D; --bad:#FF8599; --bad-soft:#3A1C24; color-scheme:dark}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ko);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;user-select:none;-webkit-user-select:none}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+button:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.zh{font-family:var(--f-zh)} .py{font-family:var(--f-py);color:var(--muted)}
+#app{max-width:600px;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:12px;overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 14px}
+#app.wide{max-width:1200px}
+.fill{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+/* top bar */
+.bar{display:flex;align-items:center;gap:10px;min-height:52px;flex:none}
+.logo{display:flex;align-items:baseline;gap:6px;font-weight:900;font-size:22px;letter-spacing:-.02em;white-space:nowrap;min-width:0}
+.logo b{color:var(--seal)}
+.logo small{font-family:var(--f-zh);font-size:13px;font-weight:700;color:var(--muted)}
+@media (max-width:460px){.back~.logo small{display:none}}
+.stats{margin-left:auto;display:flex;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:99px;background:var(--surface);border:1.5px solid var(--line);font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;min-height:40px}
+.pill i{font-style:normal;color:var(--muted);font-weight:700}
+.back{width:52px;height:52px;flex:none;border-radius:14px;display:grid;place-items:center;background:var(--surface);border:1.5px solid var(--line);font-size:24px;font-weight:800}
+/* hero */
+.hero{flex:none;padding:16px 18px;border-radius:20px;background:var(--ink);color:var(--bg);position:relative;overflow:hidden}
+.hero h1{margin:0;font-size:27px;line-height:1.25;letter-spacing:-.03em}
+.hero h1 em{font-style:normal;color:var(--sun)}
+.hero p{margin:6px 0 0;font-size:14.5px;opacity:.88;line-height:1.45}
+.hero .tuk{position:absolute;right:16px;top:10px;font-weight:900;font-size:46px;color:var(--seal);transform:rotate(-8deg)}
+.flow{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:10px;font-size:14.5px;font-weight:800}
+.flow span{color:var(--sun)} .flow i{font-style:normal;opacity:.6}
+/* controls */
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex:none}
+.seg{display:inline-flex;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:4px}
+.seg button{padding:9px 14px;border-radius:10px;font-size:16px;font-weight:800;color:var(--muted);min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+/* lesson grid: 남은 높이를 5줄로 나눠 채움 */
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(5,minmax(0,1fr));gap:8px}
+.lcard{position:relative;text-align:center;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:4px;min-width:0;min-height:0;overflow:hidden}
+.lcard .no{font-weight:900;font-size:32px;line-height:1;font-variant-numeric:tabular-nums}
+.lcard .no small{font-size:14px;font-weight:800;color:var(--muted);margin-left:2px}
+.lcard .tt{display:none}
+.pips{display:flex;gap:4px;margin-top:3px}
+.pips span{flex:1;height:7px;border-radius:4px;background:var(--line)}
+.pips span.on{background:var(--jade)}
+.stamp{position:absolute;right:6px;top:6px;width:34px;height:34px;border:2.5px solid var(--seal);color:var(--seal);border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px;transform:rotate(-14deg)}
+.foot{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:60px;padding:10px 16px;border-radius:16px;font-weight:800;font-size:19px;background:var(--surface);border:1.5px solid var(--line);text-align:center;line-height:1.25}
+.btn.primary{background:var(--seal);border-color:var(--seal);color:#fff}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.5}
+.credit{flex:none;margin:0;text-align:center;font-size:13.5px;color:var(--muted)}
+.credit b{color:var(--ink)}
+/* lesson page */
+.lhead .k{font-size:15px;font-weight:900;color:var(--seal);letter-spacing:.06em}
+.lhead h1{margin:2px 0 0;font-family:var(--f-zh);font-size:30px;line-height:1.25}
+.lhead p{margin:2px 0 0;color:var(--muted);font-size:17px}
+.gchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.gchips span{font-family:var(--f-zh);font-size:16px;padding:5px 12px;border-radius:10px;background:var(--jade-soft);color:var(--jade);font-weight:800}
+.steps{flex:1;min-height:0;display:grid;grid-template-rows:repeat(4,minmax(72px,1fr));gap:8px}
+.stepbtn{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:10px 16px;width:100%;min-height:0}
+.stepbtn .n{width:56px;height:56px;border-radius:14px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:900;font-size:24px}
+.stepbtn.done .n{background:var(--jade)}
+.stepbtn h3{margin:0;font-size:21px}
+.stepbtn p{margin:2px 0 0;font-size:15px;color:var(--muted);line-height:1.35}
+.stepbtn .sc{font-weight:900;font-variant-numeric:tabular-nums;font-size:17px;color:var(--muted)}
+.stepbtn.done .sc{color:var(--jade)}
+/* play */
+.playtop{display:flex;align-items:center;gap:12px;flex:none}
+.prog{flex:1;height:12px;border-radius:6px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--jade);border-radius:6px;transition:width .3s}
+.combo{font-weight:900;font-size:17px;color:var(--seal);min-width:64px;text-align:right;font-variant-numeric:tabular-nums}
+.timer{height:10px;border-radius:5px;background:var(--line);overflow:hidden;flex:none}
+.timer i{display:block;height:100%;width:100%;background:var(--sun);transform-origin:left}
+.qcard{flex:none;background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:12px 16px 18px;text-align:center;position:relative}
+.qcard .lab{font-size:15px;font-weight:900;color:var(--muted);letter-spacing:.02em;padding:0 50px;min-height:44px;display:flex;align-items:center;justify-content:center;line-height:1.3}
+.qcard .ko{font-size:23px;font-weight:800;margin-top:8px;line-height:1.4;text-wrap:balance}
+.qcard .big{font-family:var(--f-zh);font-size:38px;font-weight:700;margin-top:10px;line-height:1.35;word-break:keep-all}
+.qcard .big.mid{font-size:30px}
+.qcard .big u{text-decoration:none;display:inline-block;min-width:2.2em;border-bottom:4px solid var(--seal);color:var(--seal)}
+.qcard .pyl{font-size:19px;margin-top:6px;min-height:1.5em}
+.qcard .kol{font-size:18px;color:var(--muted);margin-top:4px}
+.say{position:absolute;right:10px;top:10px;width:48px;height:48px;border-radius:14px;background:var(--surface2);border:1.5px solid var(--line);display:grid;place-items:center;font-size:22px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:none}
+.opts.one{grid-template-columns:1fr}
+.opt{min-height:72px;padding:10px 14px;border-radius:16px;background:var(--surface);border:2.5px solid var(--line);font-family:var(--f-zh);font-size:28px;font-weight:700;line-height:1.35;word-break:keep-all}
+.opts.one .opt{font-size:22px;text-align:left;min-height:64px}
+.opt.ok{border-color:var(--jade);background:var(--jade-soft);color:var(--jade)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{min-height:28px;text-align:center;font-weight:900;font-size:18px;flex:none}
+.fb.ok{color:var(--jade)} .fb.no{color:var(--bad)}
+.burst{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) rotate(-10deg) scale(.6);font-weight:900;font-size:84px;color:var(--seal);text-shadow:4px 4px 0 var(--sun);pointer-events:none;opacity:0;z-index:20}
+.burst.go{animation:burst .75s ease-out}
+@keyframes burst{0%{opacity:0;transform:translate(-50%,-50%) rotate(-10deg) scale(.5)}35%{opacity:1;transform:translate(-50%,-50%) rotate(-10deg) scale(1.12)}100%{opacity:0;transform:translate(-50%,-70%) rotate(-10deg) scale(1)}}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+.spacer{flex:1}
+/* 입에 붙이기 */
+.reps{display:flex;justify-content:center;gap:10px;margin-top:14px}
+.reps span{width:40px;height:10px;border-radius:5px;background:var(--line)}
+.reps span.on{background:var(--seal)}
+.hint{font-size:17px;color:var(--muted);text-align:center;margin:0;line-height:1.45;flex:none}
+.ctrls{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:none}
+.ctrls .wide{grid-column:1/-1}
+/* 문장 조립 */
+.ans{flex:none;min-height:84px;padding:12px;border-radius:18px;border:2.5px dashed var(--line);display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;background:var(--surface2)}
+.ans.ok{border-style:solid;border-color:var(--jade);background:var(--jade-soft)}
+.ans.no{border-color:var(--bad)}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:64px;flex:none}
+.tile{font-family:var(--f-zh);font-size:25px;font-weight:700;padding:12px 16px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line);box-shadow:0 3px 0 var(--line);min-height:58px}
+.ans .tile{background:var(--ink);color:var(--bg);border-color:var(--ink);box-shadow:none}
+.ans.ok .tile{background:var(--jade);border-color:var(--jade);color:#fff}
+.tile.hl{outline:4px solid var(--bad)}
+.mission .frame{font-family:var(--f-zh);font-size:34px;font-weight:700;margin-top:12px;color:var(--seal)}
+.ex{margin-top:14px;padding:12px;border-radius:14px;background:var(--surface2);font-size:17px}
+/* 결과 */
+.res{text-align:center;align-items:center}
+.res .bigstamp{flex:none;width:130px;height:130px;margin:6px auto 0;border:6px solid var(--seal);border-radius:50%;display:grid;place-items:center;color:var(--seal);font-weight:900;font-size:44px;transform:rotate(-12deg)}
+.res .bigstamp.low{border-color:var(--muted);color:var(--muted)}
+.res h2{margin:10px 0 0;font-size:25px;line-height:1.3;text-wrap:balance}
+.res .sub{color:var(--muted);margin:0;font-size:17px}
+.res .lines{display:grid;gap:8px;width:100%;max-width:360px;text-align:left}
+.res .lines div{display:flex;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;font-size:18px;font-variant-numeric:tabular-nums}
+.res .lines b{color:var(--seal)}
+.wronglist{width:100%;max-width:440px;text-align:left;font-size:17px}
+.wronglist div{padding:9px 12px;border-bottom:1px solid var(--line)}
+/* 수업 모드 */
+.tbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:none}
+select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);max-width:100%;min-height:48px}
+.tstage{flex:1;min-height:0;border-radius:26px;background:var(--surface);border:1.5px solid var(--line);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px 24px;position:relative;overflow:hidden}
+.tstage .tk{font-size:clamp(26px,4vw,48px);font-weight:800;text-wrap:balance;line-height:1.35}
+.tstage .tz{font-family:var(--f-zh);font-size:clamp(38px,6.6vw,88px);font-weight:700;line-height:1.3;word-break:keep-all;margin-top:10px}
+.tstage .tp{font-family:var(--f-py);color:var(--muted);font-size:clamp(19px,2.6vw,32px);margin-top:8px}
+.tstage .count{font-size:clamp(70px,10vw,140px);font-weight:900;color:var(--seal);line-height:1;margin-top:16px;font-variant-numeric:tabular-nums}
+.tstage .tag{position:absolute;left:18px;top:14px;font-size:16px;font-weight:900;color:var(--muted)}
+.tstage .num{position:absolute;right:18px;top:14px;font-size:17px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums}
+.tnav{display:grid;grid-template-columns:1fr 2fr 1fr;gap:10px;flex:none}
+.kbd{font-size:14px;color:var(--muted);text-align:center;margin:0;flex:none}
+/* 선생님께 */
+.doc{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:20px;user-select:text;-webkit-user-select:text}
+.doc h2{margin:0 0 8px;font-size:22px;line-height:1.35}
+.doc h3{margin:18px 0 6px;font-size:19px}
+.doc p,.doc li{font-size:17px;line-height:1.7;max-width:65ch}
+.doc ol,.doc ul{padding-left:22px;margin:4px 0}
+.doc .sig{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:16px;color:var(--muted)}
+.doc .sig b{color:var(--ink);font-size:19px}
+.banner{flex:none;padding:12px 14px;border-radius:14px;background:var(--seal-soft);color:var(--ink);font-size:16px}
+/* 작은 휴대폰 */
+@media (max-height:720px){
+  .hero{padding:12px 16px}.hero h1{font-size:23px}.hero p{display:none}.flow{margin-top:6px;font-size:13.5px}
+  .credit{display:none}.seg button{min-height:40px;padding:6px 12px}.pill{min-height:36px;padding:5px 10px}
+  .stepbtn p{display:none}.stepbtn h3{font-size:20px}.stepbtn .n{width:48px;height:48px}.stepbtn{grid-template-columns:48px 1fr auto}
+  .gchips span{font-size:14px;padding:3px 10px}.lhead h1{font-size:26px}
+  .qcard{padding:14px}.qcard .big{font-size:32px}.qcard .ko{font-size:20px}.opt{min-height:60px;font-size:24px}.opts.one .opt{font-size:19px;min-height:54px}
+  .btn{min-height:54px;font-size:17px}.lcard .no{font-size:26px}
+}
+@media (max-width:370px){.stats .pill:first-child{display:none}.lcard .no{font-size:24px}.lcard .tt{font-size:12px}.opt{font-size:23px}.btn{font-size:17px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="burst" id="burst">툭!</div>
+
+<script>
+// 速成 덩어리 툭! — 《汉语口语速成 入门篇(下)》 16~30과 연계 데이터
+// 단어·문법 범위는 교재 각 과 기준. 짝꿍어휘·예문·질문은 진담중국어가 말하기 연습용으로 새로 작성.
+// c: 짝꿍어휘 '중국어|병음|뜻|빈칸 단어'
+// s: 문장 조립 '한국어|토막/토막/토막|병음'
+// q: 즉시반응 '질문|병음|뜻|대답|병음|뜻'
+// m: 내 문장 '틀|안내|예시|예시 병음'
+const LESSONS = [
+{n:16,t:'他正在等他爱人呢',ko:'지금 ~하고 있어요',g:['正在……呢','有的……有的','一边……一边'],
+c:['商店大减价|shāngdiàn dà jiǎnjià|가게가 대할인을 하다|减价','排队交钱|pái duì jiāo qián|줄 서서 계산하다|排队','挑东西|tiāo dōngxi|물건을 고르다|挑','找工作|zhǎo gōngzuò|일자리를 찾다|找','打电话|dǎ diànhuà|전화를 걸다|打','一边喝咖啡一边聊天儿|yìbiān hē kāfēi yìbiān liáo tiānr|커피 마시면서 수다 떨다|聊天儿','回答问题|huídá wèntí|질문에 대답하다|回答','寄信|jì xìn|편지를 부치다|寄'],
+s:['나는 지금 음악을 듣고 있어.|我/正在/听/音乐/呢。|Wǒ zhèngzài tīng yīnyuè ne.','밖에 비가 오고 있어요.|外边/正在/下/雨/呢。|Wàibian zhèngzài xià yǔ ne.','어떤 사람은 물건을 고르고, 어떤 사람은 줄을 서요.|有的人/挑东西，/有的人/排队。|Yǒude rén tiāo dōngxi, yǒude rén pái duì.','나는 음악을 들으면서 숙제를 해요.|我/一边/听音乐/一边/写作业。|Wǒ yìbiān tīng yīnyuè yìbiān xiě zuòyè.','내년 이맘때 너는 아마 여행하고 있을 거야.|明年这个时候，/你/可能/正在/旅行/呢。|Míngnián zhège shíhou, nǐ kěnéng zhèngzài lǚxíng ne.'],
+q:['你在做什么呢？|Nǐ zài zuò shénme ne?|너 뭐 하고 있어?|我正在听音乐呢。|Wǒ zhèngzài tīng yīnyuè ne.|음악 듣고 있어.','外边下雨了吗？|Wàibian xià yǔ le ma?|밖에 비 와?|是啊，正在下雨呢。|Shì a, zhèngzài xià yǔ ne.|응, 지금 비 오고 있어.','刚才你给谁打电话？|Gāngcái nǐ gěi shéi dǎ diànhuà?|방금 누구한테 전화했어?|我给妈妈打电话。|Wǒ gěi māma dǎ diànhuà.|엄마한테 전화했어.','明年这个时候你可能在做什么？|Míngnián zhège shíhou nǐ kěnéng zài zuò shénme?|내년 이맘때 너는 뭘 하고 있을까?|明年这个时候，我可能在中国旅行。|Míngnián zhège shíhou, wǒ kěnéng zài Zhōngguó lǚxíng.|내년 이맘때 아마 중국에서 여행하고 있을 거야.','你喜欢一边做什么一边聊天儿？|Nǐ xǐhuan yìbiān zuò shénme yìbiān liáo tiānr?|뭐 하면서 수다 떠는 걸 좋아해?|我喜欢一边喝咖啡一边聊天儿。|Wǒ xǐhuan yìbiān hē kāfēi yìbiān liáo tiānr.|커피 마시면서 수다 떠는 걸 좋아해.','那家商店怎么样？|Nà jiā shāngdiàn zěnmeyàng?|그 가게 어때?|东西正在大减价，顾客真不少。|Dōngxi zhèngzài dà jiǎnjià, gùkè zhēn bù shǎo.|지금 대할인 중이라 손님이 정말 많아.'],
+m:['我正在___呢。|지금 내가 하고 있는 일을 말해 보세요.|我正在学汉语呢。|Wǒ zhèngzài xué Hànyǔ ne.','我一边___一边___。|동시에 하는 나의 습관을 말해 보세요.|我一边吃饭一边看手机。|Wǒ yìbiān chī fàn yìbiān kàn shǒujī.']},
+
+{n:17,t:'刚才你去哪儿了',ko:'방금 어디 갔었어?',g:['了 (완료)','……了……就……','没(有)……'],
+c:['逛商店|guàng shāngdiàn|쇼핑하러 다니다|逛','买了一顶帽子|mǎile yì dǐng màozi|모자를 하나 샀다|顶','陪朋友|péi péngyou|친구와 함께 가 주다|陪','风景特别美|fēngjǐng tèbié měi|경치가 특히 아름답다|风景','吃烤鸭|chī kǎoyā|오리구이를 먹다|烤鸭','抽时间|chōu shíjiān|시간을 내다|抽','洗衣服|xǐ yīfu|빨래하다|洗','一枝花|yì zhī huā|꽃 한 송이|枝'],
+s:['나는 치마 두 벌을 샀어.|我/买了/两条/裙子。|Wǒ mǎile liǎng tiáo qúnzi.','나는 아직 오리구이를 안 먹었어.|我/还/没/吃/烤鸭/呢。|Wǒ hái méi chī kǎoyā ne.','수업 끝나면 바로 그에게 전화할게.|我/下了课/就/给他/打电话。|Wǒ xiàle kè jiù gěi tā dǎ diànhuà.','주말에 나는 친구랑 같이 만리장성에 갔어.|周末/我/陪/朋友/去了/长城。|Zhōumò wǒ péi péngyou qùle Chángchéng.','너 그에게 벌써 말했어?|你/已经/告诉/他/了/吗？|Nǐ yǐjīng gàosu tā le ma?'],
+q:['刚才你去哪儿了？|Gāngcái nǐ qù nǎr le?|방금 어디 갔었어?|我跟朋友逛商店去了。|Wǒ gēn péngyou guàng shāngdiàn qù le.|친구랑 쇼핑 갔었어.','你买什么了？|Nǐ mǎi shénme le?|뭐 샀어?|我买了一顶帽子。|Wǒ mǎile yì dǐng màozi.|모자 하나 샀어.','你吃烤鸭了吗？|Nǐ chī kǎoyā le ma?|오리구이 먹었어?|还没吃呢，我打算周末去吃。|Hái méi chī ne, wǒ dǎsuàn zhōumò qù chī.|아직 안 먹었어. 주말에 먹으러 갈 거야.','颐和园的风景怎么样？|Yíhéyuán de fēngjǐng zěnmeyàng?|이허위안 경치 어때?|风景特别美！|Fēngjǐng tèbié měi!|경치가 정말 예뻐!','你什么时候给他打电话？|Nǐ shénme shíhou gěi tā dǎ diànhuà?|언제 그에게 전화할 거야?|下了课就给他打。|Xiàle kè jiù gěi tā dǎ.|수업 끝나면 바로 걸 거야.','周末你做什么了？|Zhōumò nǐ zuò shénme le?|주말에 뭐 했어?|我在宿舍洗衣服了。|Wǒ zài sùshè xǐ yīfu le.|기숙사에서 빨래했어.'],
+m:['昨天我___了___。|어제 한 일을 수량과 함께 말해 보세요.|昨天我买了两本书。|Zuótiān wǒ mǎile liǎng běn shū.','我下了课就___。|수업 끝나고 바로 하는 일을 말해 보세요.|我下了课就去吃饭。|Wǒ xiàle kè jiù qù chī fàn.']},
+
+{n:18,t:'秋天了',ko:'가을이 됐어요',g:['了 (변화)','要……了','能 / 可以'],
+c:['天气凉了|tiānqì liáng le|날씨가 쌀쌀해졌다|凉','树叶红了|shùyè hóng le|나뭇잎이 빨개졌다|树叶','睡懒觉|shuì lǎnjiào|늦잠 자다|懒觉','看上去更瘦|kàn shangqu gèng shòu|보기에 더 말라 보이다|看上去','天阴了|tiān yīn le|날이 흐려졌다|阴','刮风了|guā fēng le|바람이 분다|刮','花开了|huā kāi le|꽃이 피었다|开','给亲戚买礼物|gěi qīnqi mǎi lǐwù|친척에게 선물을 사 주다|亲戚'],
+s:['가을이 됐어. 날씨가 쌀쌀해졌어.|秋天了，/天气/凉/了。|Qiūtiān le, tiānqì liáng le.','곧 수업이 끝나요.|要/下课/了。|Yào xià kè le.','날이 흐려졌어, 곧 비가 오겠어.|天/阴了，/要/下雨/了。|Tiān yīn le, yào xià yǔ le.','요즘 바빠서 이제 늦잠을 잘 수 없어요.|最近/很忙，/不能/睡懒觉/了。|Zuìjìn hěn máng, bù néng shuì lǎnjiào le.','그는 이제 직원이 되었어요.|他/现在/是/职员/了。|Tā xiànzài shì zhíyuán le.'],
+q:['今天天气怎么样？|Jīntiān tiānqì zěnmeyàng?|오늘 날씨 어때?|天阴了，要下雨了。|Tiān yīn le, yào xià yǔ le.|날이 흐려졌어, 곧 비 오겠어.','你最近怎么瘦了？|Nǐ zuìjìn zěnme shòu le?|요즘 왜 이렇게 말랐어?|最近工作太忙了。|Zuìjìn gōngzuò tài máng le.|요즘 일이 너무 바빴어.','周末你能睡懒觉吗？|Zhōumò nǐ néng shuì lǎnjiào ma?|주말에 늦잠 잘 수 있어?|能，周末我可以睡懒觉。|Néng, zhōumò wǒ kěyǐ shuì lǎnjiào.|응, 주말엔 늦잠 자도 돼.','几点了？|Jǐ diǎn le?|몇 시야?|十一点五十了，要下课了。|Shíyī diǎn wǔshí le, yào xià kè le.|11시 50분이야, 곧 수업 끝나.','下星期你要回国了，你打算做什么？|Xià xīngqī nǐ yào huí guó le, nǐ dǎsuàn zuò shénme?|다음 주에 귀국하는데 뭐 할 계획이야?|我要给亲戚朋友买点儿礼物。|Wǒ yào gěi qīnqi péngyou mǎi diǎnr lǐwù.|친척이랑 친구들 선물 좀 사려고.','香山的树叶红了吗？|Xiāngshān de shùyè hóng le ma?|샹산 단풍 들었어?|红了，山上的树叶都红了。|Hóng le, shān shang de shùyè dōu hóng le.|응, 산의 나뭇잎이 다 빨개졌어.'],
+m:['___了，___了。|계절이나 나의 변화를 말해 보세요.|冬天了，我胖了。|Dōngtiān le, wǒ pàng le.','要___了。|곧 일어날 일을 말해 보세요.|要考试了。|Yào kǎoshì le.']},
+
+{n:19,t:'你游泳游得怎么样',ko:'수영 실력은 어때?',g:['정도보어 得','会'],
+c:['踢足球|tī zúqiú|축구를 하다|踢','打篮球|dǎ lánqiú|농구를 하다|篮球','游得不错|yóu de búcuò|수영을 꽤 잘하다|得','踢得真棒|tī de zhēn bàng|정말 잘 차다|棒','看足球比赛|kàn zúqiú bǐsài|축구 경기를 보다|比赛','一定会赢|yídìng huì yíng|꼭 이길 거야|赢','做菜做得很好|zuò cài zuò de hěn hǎo|요리를 아주 잘하다|做菜','我真羡慕你|wǒ zhēn xiànmù nǐ|정말 부러워|羡慕'],
+s:['너 수영 실력 어때?|你/游泳/游得/怎么样？|Nǐ yóuyǒng yóu de zěnmeyàng?','나는 수영 못 해, 맥주병이야.|我/不会/游泳，/是个/旱鸭子。|Wǒ bú huì yóuyǒng, shì ge hànyāzi.','그는 축구를 정말 잘 차.|他/踢足球/踢得/真棒。|Tā tī zúqiú tī de zhēn bàng.','나는 오늘 일찍 일어났어.|我/今天/起得/很早。|Wǒ jīntiān qǐ de hěn zǎo.','내 생각에 브라질 팀이 이길 것 같아.|我/估计/巴西队/会/赢。|Wǒ gūjì Bāxī duì huì yíng.'],
+q:['你会游泳吗？|Nǐ huì yóuyǒng ma?|수영할 줄 알아?|会一点儿，游得不太好。|Huì yìdiǎnr, yóu de bú tài hǎo.|조금 해, 잘하진 못해.','你喜欢什么运动？|Nǐ xǐhuan shénme yùndòng?|무슨 운동 좋아해?|我最喜欢踢足球。|Wǒ zuì xǐhuan tī zúqiú.|축구를 제일 좋아해.','你汉语说得怎么样？|Nǐ Hànyǔ shuō de zěnmeyàng?|중국어 말하는 건 어때?|说得还可以，可是写得不好。|Shuō de hái kěyǐ, kěshì xiě de bù hǎo.|말은 그럭저럭 하는데 쓰기는 잘 못해.','你猜哪个队会赢？|Nǐ cāi nǎge duì huì yíng?|어느 팀이 이길 것 같아?|我估计巴西队一定会赢。|Wǒ gūjì Bāxī duì yídìng huì yíng.|브라질 팀이 꼭 이길 것 같아.','你昨天睡得好吗？|Nǐ zuótiān shuì de hǎo ma?|어제 잘 잤어?|睡得太晚了，现在很累。|Shuì de tài wǎn le, xiànzài hěn lèi.|너무 늦게 자서 지금 피곤해.','今晚有足球比赛，你想看吗？|Jīnwǎn yǒu zúqiú bǐsài, nǐ xiǎng kàn ma?|오늘 밤 축구 경기 있는데 볼래?|想看，可是我得陪女朋友去音乐会。|Xiǎng kàn, kěshì wǒ děi péi nǚ péngyou qù yīnyuèhuì.|보고 싶은데 여자친구랑 음악회 가야 해.'],
+m:['我___得___。|내가 잘하는(못하는) 것을 말해 보세요.|我做菜做得不错。|Wǒ zuò cài zuò de búcuò.','我会___，不会___。|할 줄 아는 것과 모르는 것을 말해 보세요.|我会游泳，不会打网球。|Wǒ huì yóuyǒng, bú huì dǎ wǎngqiú.']},
+
+{n:20,t:'明天我就要回国了',ko:'내일이면 귀국해요',g:['시량보어 (多长时间)','才 / 就','虽然……但是……','因为……所以……'],
+c:['时间过得真快|shíjiān guò de zhēn kuài|시간이 정말 빨리 가다|过','学习很紧张|xuéxí hěn jǐnzhāng|공부가 빠듯하다|紧张','过得很愉快|guò de hěn yúkuài|즐겁게 지내다|愉快','路上堵车|lù shang dǔ chē|길이 막히다|堵车','等了半天|děngle bàntiān|한참 기다렸다|半天','去机场送朋友|qù jīchǎng sòng péngyou|공항에 친구를 배웅하러 가다|送','休息一会儿|xiūxi yíhuìr|잠깐 쉬다|一会儿','说得很流利|shuō de hěn liúlì|유창하게 말하다|流利'],
+s:['나는 중국어를 두 달 배웠어.|我/学了/两个月/汉语。|Wǒ xuéle liǎng ge yuè Hànyǔ.','내일이면 저는 곧 귀국해요.|明天/我/就要/回国/了。|Míngtiān wǒ jiù yào huí guó le.','차가 막혀서 나는 10시가 되어서야 도착했어.|因为/堵车，/所以/我/十点/才/到。|Yīnwèi dǔ chē, suǒyǐ wǒ shí diǎn cái dào.','공부는 빠듯하지만 즐겁게 지내요.|虽然/学习很紧张，/但是/我/过得/很愉快。|Suīrán xuéxí hěn jǐnzhāng, dànshì wǒ guò de hěn yúkuài.','나는 한 시간 동안 기다렸어.|我/等了/一个/小时。|Wǒ děngle yí ge xiǎoshí.'],
+q:['你来中国多长时间了？|Nǐ lái Zhōngguó duō cháng shíjiān le?|중국에 온 지 얼마나 됐어?|我来中国一个多月了。|Wǒ lái Zhōngguó yí ge duō yuè le.|중국에 온 지 한 달 넘었어.','你在这儿过得怎么样？|Nǐ zài zhèr guò de zěnmeyàng?|여기서 지내는 거 어때?|虽然很紧张，但是过得很愉快。|Suīrán hěn jǐnzhāng, dànshì guò de hěn yúkuài.|빠듯하지만 즐겁게 지내.','你怎么现在才来？|Nǐ zěnme xiànzài cái lái?|왜 이제야 왔어?|因为路上堵车，所以来晚了。|Yīnwèi lù shang dǔ chē, suǒyǐ lái wǎn le.|길이 막혀서 늦었어.','你每天学习几个小时汉语？|Nǐ měi tiān xuéxí jǐ ge xiǎoshí Hànyǔ?|매일 중국어를 몇 시간 공부해?|我每天学习四个小时。|Wǒ měi tiān xuéxí sì ge xiǎoshí.|매일 네 시간 공부해.','你什么时候回国？|Nǐ shénme shíhou huí guó?|언제 귀국해?|后天就要回国了。|Hòutiān jiù yào huí guó le.|모레면 귀국해.','你汉语说得真流利！|Nǐ Hànyǔ shuō de zhēn liúlì!|중국어 정말 유창하다!|哪里哪里，还差得远呢。|Nǎli nǎli, hái chà de yuǎn ne.|아니에요, 아직 멀었어요.'],
+m:['我来中国___了。|중국에 온 지 얼마나 됐는지 말해 보세요.|我来中国两个星期了。|Wǒ lái Zhōngguó liǎng ge xīngqī le.','虽然___，但是___。|연수 생활 소감을 한 줄로 말해 보세요.|虽然很累，但是很愉快。|Suīrán hěn lèi, dànshì hěn yúkuài.']},
+
+{n:21,t:'你去过香山吗',ko:'샹산에 가 봤어?',g:['过 (경험)','是……的','遍 / 次 / 下儿','除了……以外'],
+c:['去过一次|qùguo yí cì|한 번 가 봤다|次','听了好几遍|tīngle hǎo jǐ biàn|여러 번 들었다|遍','有名的小吃|yǒumíng de xiǎochī|유명한 먹거리|小吃','风味菜|fēngwèi cài|지역 특색 요리|风味','差不多都吃过|chàbuduō dōu chīguo|거의 다 먹어 봤다|差不多','你真不简单|nǐ zhēn bù jiǎndān|너 정말 대단하다|简单','从来没学过|cónglái méi xuéguo|한 번도 배운 적 없다|从来','自己去的|zìjǐ qù de|혼자 간 거야|自己'],
+s:['나는 샹산에 가 본 적 있어.|我/去过/香山。|Wǒ qùguo Xiāngshān.','나는 지난달에 간 거야.|我/是/上个月/去/的。|Wǒ shì shàng ge yuè qù de.','나는 자전거 타고 간 거야.|我/是/骑车/去/的。|Wǒ shì qí chē qù de.','오리구이 말고 또 뭘 먹어 봤어?|除了/烤鸭/以外，/你/还/吃过/什么？|Chúle kǎoyā yǐwài, nǐ hái chīguo shénme?','이 노래를 나는 세 번 들었어.|这首歌/我/听了/三遍。|Zhè shǒu gē wǒ tīngle sān biàn.'],
+q:['你去过长城吗？|Nǐ qùguo Chángchéng ma?|만리장성 가 봤어?|去过，去过两次。|Qùguo, qùguo liǎng cì.|가 봤어, 두 번 가 봤어.','你是什么时候来北京的？|Nǐ shì shénme shíhou lái Běijīng de?|베이징에 언제 온 거야?|我是上个月来的。|Wǒ shì shàng ge yuè lái de.|지난달에 왔어.','你是怎么去的？|Nǐ shì zěnme qù de?|어떻게 간 거야?|我是坐地铁去的。|Wǒ shì zuò dìtiě qù de.|지하철 타고 갔어.','你吃过北京的小吃吗？|Nǐ chīguo Běijīng de xiǎochī ma?|베이징 먹거리 먹어 봤어?|吃过，差不多都吃过。|Chīguo, chàbuduō dōu chīguo.|먹어 봤어, 거의 다 먹어 봤어.','你跟谁一起去的？|Nǐ gēn shéi yìqǐ qù de?|누구랑 같이 갔어?|我是自己去的。|Wǒ shì zìjǐ qù de.|혼자 갔어.','你学过英语没有？|Nǐ xuéguo Yīngyǔ méiyǒu?|영어 배워 본 적 있어?|从来没学过。|Cónglái méi xuéguo.|한 번도 배운 적 없어.'],
+m:['我去过___，没去过___。|가 본 곳과 아직 못 가 본 곳을 말해 보세요.|我去过长城，没去过香山。|Wǒ qùguo Chángchéng, méi qùguo Xiāngshān.','我是___来中国的。|언제·어떻게 중국에 왔는지 말해 보세요.|我是坐飞机来中国的。|Wǒ shì zuò fēijī lái Zhōngguó de.']},
+
+{n:22,t:'门开着',ko:'문이 열려 있어요',g:['着 (지속)','好好儿 / 整整齐齐','地'],
+c:['门开着|mén kāizhe|문이 열려 있다|开','在床上躺着|zài chuáng shang tǎngzhe|침대에 누워 있다|躺','墙上挂着地图|qiáng shang guàzhe dìtú|벽에 지도가 걸려 있다|挂','摆得整整齐齐|bǎi de zhěngzhěngqíqí|가지런히 진열되어 있다|整整齐齐','在沙发上坐着|zài shāfā shang zuòzhe|소파에 앉아 있다|沙发','戴着帽子|dàizhe màozi|모자를 쓰고 있다|戴','认真地学习|rènzhēn de xuéxí|열심히 공부하다|认真','请勿吸烟|qǐng wù xī yān|흡연 금지|勿'],
+s:['문이 열려 있고 TV도 켜져 있어.|门/开着，/电视/也/开着。|Mén kāizhe, diànshì yě kāizhe.','책꽂이에 사전이 한 권 놓여 있어.|书架上/放着/一本/词典。|Shūjià shang fàngzhe yì běn cídiǎn.','아빠는 소파에 앉아서 신문을 보고 있어.|爸爸/在沙发上/坐着/看/报。|Bàba zài shāfā shang zuòzhe kàn bào.','고양이가 창턱에 엎드려 자고 있어.|小猫/在窗台上/趴着/睡觉。|Xiǎo māo zài chuāngtái shang pāzhe shuì jiào.','학생들이 열심히 공부하고 있어.|学生们/正在/认真地/学习。|Xuéshengmen zhèngzài rènzhēn de xuéxí.'],
+q:['门开着吗？|Mén kāizhe ma?|문 열려 있어?|没开着，门关着呢。|Méi kāizhe, mén guānzhe ne.|안 열려 있어, 닫혀 있어.','你的词典在哪儿？|Nǐ de cídiǎn zài nǎr?|네 사전 어디 있어?|在书架上放着呢。|Zài shūjià shang fàngzhe ne.|책꽂이에 놓여 있어.','墙上挂着什么？|Qiáng shang guàzhe shénme?|벽에 뭐가 걸려 있어?|墙上挂着一张中国地图。|Qiáng shang guàzhe yì zhāng Zhōngguó dìtú.|중국 지도가 한 장 걸려 있어.','那个戴着帽子的人是谁？|Nàge dàizhe màozi de rén shì shéi?|저 모자 쓴 사람 누구야?|他是我们的汉语老师。|Tā shì wǒmen de Hànyǔ lǎoshī.|우리 중국어 선생님이야.','小猫在哪儿？|Xiǎo māo zài nǎr?|고양이 어디 있어?|在窗台上趴着睡觉呢。|Zài chuāngtái shang pāzhe shuì jiào ne.|창턱에 엎드려 자고 있어.','超市里的东西摆得怎么样？|Chāoshì li de dōngxi bǎi de zěnmeyàng?|마트 물건이 어떻게 진열돼 있어?|摆得整整齐齐的。|Bǎi de zhěngzhěngqíqí de.|가지런하게 진열돼 있어.'],
+m:['我的房间里___着___。|내 방에 무엇이 어떻게 있는지 말해 보세요.|我的房间里放着很多书。|Wǒ de fángjiān li fàngzhe hěn duō shū.','___在___着。|지금 교실 모습을 말해 보세요.|老师在前边站着。|Lǎoshī zài qiánbian zhànzhe.']},
+
+{n:23,t:'你打错了',ko:'전화 잘못 거셨어요',g:['결과보어 (到·住·完·好·错·懂)','一……就……'],
+c:['打错了|dǎ cuò le|(전화를) 잘못 걸었다|错','买到票|mǎi dào piào|표를 구하다|到','记住手机号|jì zhù shǒujī hào|휴대폰 번호를 기억해 두다|住','发短信|fā duǎnxìn|문자를 보내다|发','听清楚|tīng qīngchu|똑똑히 듣다|清楚','做完作业|zuò wán zuòyè|숙제를 다 하다|完','麻烦您转告他|máfan nín zhuǎngào tā|그에게 좀 전해 주세요|转告','修好手表|xiū hǎo shǒubiǎo|손목시계를 다 고치다|修'],
+s:['죄송해요, 잘 못 들었어요. 한 번 더 말해 주세요.|对不起，/我/没/听清楚，/请/再说/一遍。|Duìbuqǐ, wǒ méi tīng qīngchu, qǐng zài shuō yí biàn.','나 기차표 구했어.|我/买到/火车票/了。|Wǒ mǎi dào huǒchēpiào le.','밥 다 먹자마자 바로 갈게.|我/一/吃完饭/就/去。|Wǒ yì chī wán fàn jiù qù.','그의 휴대폰 번호 기억했어?|你/记住/他的手机号/了/吗？|Nǐ jì zhù tā de shǒujī hào le ma?','그는 휴대폰을 켜자마자 문자를 봤어.|他/一/开机/就/看到/短信/了。|Tā yì kāi jī jiù kàn dào duǎnxìn le.'],
+q:['喂，是留学生宿舍吗？|Wèi, shì liúxuéshēng sùshè ma?|여보세요, 유학생 기숙사죠?|不是，你打错了。|Bú shì, nǐ dǎ cuò le.|아니요, 잘못 거셨어요.','你买到火车票了吗？|Nǐ mǎi dào huǒchēpiào le ma?|기차표 구했어?|买到了，星期五晚上的。|Mǎi dào le, xīngqīwǔ wǎnshang de.|구했어, 금요일 저녁 표야.','你看见保罗了没有？|Nǐ kànjiàn Bǎoluó le méiyǒu?|폴 봤어?|看见了，他在图书馆呢。|Kànjiàn le, tā zài túshūguǎn ne.|봤어, 도서관에 있어.','老师讲的你听懂了吗？|Lǎoshī jiǎng de nǐ tīng dǒng le ma?|선생님 설명 알아들었어?|没听懂，请老师再讲一遍。|Méi tīng dǒng, qǐng lǎoshī zài jiǎng yí biàn.|못 알아들었어요, 한 번 더 설명해 주세요.','你的作业做完了吗？|Nǐ de zuòyè zuò wán le ma?|숙제 다 했어?|还没做完呢。|Hái méi zuò wán ne.|아직 다 못 했어.','麻烦你转告他，好吗？|Máfan nǐ zhuǎngào tā, hǎo ma?|그에게 좀 전해 줄래?|没问题，他一回来我就告诉他。|Méi wèntí, tā yì huílai wǒ jiù gàosu tā.|문제없어, 오자마자 말해 줄게.'],
+m:['我___完/好/到___了。|오늘 끝낸 일을 결과보어로 말해 보세요.|我做完作业了。|Wǒ zuò wán zuòyè le.','我一___就___。|~하자마자 하는 나의 습관을 말해 보세요.|我一回宿舍就洗澡。|Wǒ yì huí sùshè jiù xǐ zǎo.']},
+
+{n:24,t:'她出去了',ko:'그녀는 나갔어요',g:['방향보어 (来·去)','要是……就……','请 / 叫 / 让'],
+c:['快进屋来|kuài jìn wū lái|어서 방에 들어와|进','打扰你们一下儿|dǎrǎo nǐmen yíxiàr|잠깐 실례할게요|打扰','让你久等了|ràng nǐ jiǔ děng le|오래 기다리게 했네|久等','帮我买|bāng wǒ mǎi|나 대신 사다 주다|帮','真不好意思|zhēn bù hǎo yìsi|정말 미안해|不好意思','上楼来|shàng lóu lái|위층으로 올라오다|上','带照相机来|dài zhàoxiàngjī lái|카메라를 가져오다|照相机','借来一本小说|jiè lái yì běn xiǎoshuō|소설 한 권을 빌려 오다|借'],
+s:['그녀는 나갔어.|她/出去/了。|Tā chūqu le.','어서 방으로 들어와.|快/进/屋/来/吧。|Kuài jìn wū lái ba.','만약 그가 오면 나한테 전화하라고 해 줘.|要是/他来了，/就/让他/给我/打电话。|Yàoshi tā lái le, jiù ràng tā gěi wǒ dǎ diànhuà.','선생님이 너 사무실로 오래.|老师/叫你/去/办公室。|Lǎoshī jiào nǐ qù bàngōngshì.','그는 책을 몇 권 사 왔어.|他/买回来/几本/书。|Tā mǎi huílai jǐ běn shū.'],
+q:['莉莉呢？|Lìli ne?|리리는?|她出去了，一会儿就回来。|Tā chūqu le, yíhuìr jiù huílai.|나갔어, 곧 돌아올 거야.','我不妨碍你吧？|Wǒ bù fáng\'ài nǐ ba?|내가 방해되는 건 아니지?|没关系，快进来吧。|Méi guānxi, kuài jìnlai ba.|괜찮아, 어서 들어와.','真抱歉，让你久等了。|Zhēn bàoqiàn, ràng nǐ jiǔ děng le.|정말 미안, 오래 기다렸지.|没什么，我也刚到。|Méi shénme, wǒ yě gāng dào.|괜찮아, 나도 방금 왔어.','要我帮忙吗？|Yào wǒ bāng máng ma?|도와줄까?|不用了，谢谢！|Búyòng le, xièxie!|괜찮아, 고마워!','你带照相机来了吗？|Nǐ dài zhàoxiàngjī lái le ma?|카메라 가져왔어?|带来了，我们一起照相吧。|Dài lái le, wǒmen yìqǐ zhào xiàng ba.|가져왔어, 같이 사진 찍자.','你什么时候还我小说？|Nǐ shénme shíhou huán wǒ xiǎoshuō?|소설책 언제 돌려줄 거야?|我明天就给你送回去。|Wǒ míngtiān jiù gěi nǐ sòng huíqu.|내일 바로 돌려줄게.'],
+m:['___回来/进来/出去___。|방향보어를 넣어 한 일을 말해 보세요.|我买回来一些水果。|Wǒ mǎi huílai yìxiē shuǐguǒ.','要是___，就___。|만약 ~하면 어떻게 할지 말해 보세요.|要是明天下雨，我们就不去了。|Yàoshi míngtiān xià yǔ, wǒmen jiù bú qù le.']},
+
+{n:25,t:'他恐怕去不了',ko:'그는 아마 못 갈 거예요',g:['가능보어 (得 / 不)','了 (liǎo)','怎么……呢'],
+c:['有空儿的话|yǒu kòngr dehuà|시간 있으면|空儿','看得懂字幕|kàn de dǒng zìmù|자막을 보고 이해할 수 있다|字幕','听不懂|tīng bu dǒng|들어도 못 알아듣다|懂','去不了|qù bu liǎo|갈 수 없다|了','赶不上车|gǎn bu shàng chē|차 시간에 못 대다|赶','耽误不了你的约会|dānwu bu liǎo nǐ de yuēhuì|네 약속에 지장 없어|耽误','放心吧|fàng xīn ba|안심해|放心','邀请我们去郊游|yāoqǐng wǒmen qù jiāoyóu|우리를 교외 나들이에 초대하다|郊游'],
+s:['그는 아마 못 갈 거야.|他/恐怕/去/不了。|Tā kǒngpà qù bu liǎo.','자막이 있으니까 너는 분명 알아볼 수 있어.|有字幕，/你/肯定/看得懂。|Yǒu zìmù, nǐ kěndìng kàn de dǒng.','너무 멀어서 자막이 잘 안 보여.|太远了，/我/看不清楚/字幕。|Tài yuǎn le, wǒ kàn bu qīngchu zìmù.','시간 있으면 같이 영화 보러 가자.|有空儿的话，/我们/一起/去看/电影/吧。|Yǒu kòngr dehuà, wǒmen yìqǐ qù kàn diànyǐng ba.','요리가 이렇게 많은데 혼자 어떻게 다 먹어?|这么多菜，/一个人/怎么/吃得了/呢？|Zhème duō cài, yí ge rén zěnme chī de liǎo ne?'],
+q:['今晚你有空儿吗？|Jīnwǎn nǐ yǒu kòngr ma?|오늘 저녁 시간 있어?|有空儿，你有什么事儿？|Yǒu kòngr, nǐ yǒu shénme shìr?|시간 있어, 무슨 일이야?','保罗去得了去不了？|Bǎoluó qù de liǎo qù bu liǎo?|폴은 갈 수 있어, 없어?|他受伤了，恐怕去不了。|Tā shòu shāng le, kǒngpà qù bu liǎo.|다쳐서 아마 못 갈 거야.','中国电影你看得懂吗？|Zhōngguó diànyǐng nǐ kàn de dǒng ma?|중국 영화 보면 알아들어?|有字幕的话，大概看得懂。|Yǒu zìmù dehuà, dàgài kàn de dǒng.|자막이 있으면 대충 이해해.','这么早出发，你起得来吗？|Zhème zǎo chūfā, nǐ qǐ de lái ma?|이렇게 일찍 출발하는데 일어날 수 있어?|放心吧，我上好闹钟了。|Fàng xīn ba, wǒ shàng hǎo nàozhōng le.|걱정 마, 알람 맞춰 놨어.','七点以前回得来吗？|Qī diǎn yǐqián huí de lái ma?|7시 전에 돌아올 수 있어?|回得来，耽误不了你的约会。|Huí de lái, dānwu bu liǎo nǐ de yuēhuì.|돌아올 수 있어, 네 약속에 지장 없어.','坐这儿看得清楚吗？|Zuò zhèr kàn de qīngchu ma?|여기 앉으면 잘 보여?|太远了，看不清楚。|Tài yuǎn le, kàn bu qīngchu.|너무 멀어서 잘 안 보여.'],
+m:['我___得懂/不懂___。|이해할 수 있는 것, 없는 것을 말해 보세요.|我听得懂老师的话。|Wǒ tīng de dǒng lǎoshī de huà.','___不了___。|할 수 없는 일을 말해 보세요.|这么多菜我吃不了。|Zhème duō cài wǒ chī bu liǎo.']},
+
+{n:26,t:'西安比北京还热',ko:'시안은 베이징보다 더 더워요',g:['比 (비교)','跟……一样','没有 (비교 부정)'],
+c:['名胜古迹|míngshèng gǔjì|명승고적|古迹','比北京还热|bǐ Běijīng hái rè|베이징보다 더 덥다|还','找个伴儿|zhǎo ge bànr|같이 갈 친구를 찾다|伴儿','互相帮助|hùxiāng bāngzhù|서로 돕다|互相','跟我一样|gēn wǒ yíyàng|나랑 같다|一样','对中国文化感兴趣|duì Zhōngguó wénhuà gǎn xìngqù|중국 문화에 관심이 있다|感兴趣','看天气预报|kàn tiānqì yùbào|일기예보를 보다|预报','跟家里人商量|gēn jiā li rén shāngliang|가족과 상의하다|商量'],
+s:['시안은 베이징보다 더 더워.|西安/比/北京/还/热。|Xī\'ān bǐ Běijīng hái rè.','그는 나보다 두 살 많아.|他/比/我/大/两岁。|Tā bǐ wǒ dà liǎng suì.','나는 키가 너랑 똑같아.|我/跟你/一样/高。|Wǒ gēn nǐ yíyàng gāo.','이 방은 저 방만큼 크지 않아.|这个房间/没有/那个房间/大。|Zhège fángjiān méiyǒu nàge fángjiān dà.','그는 나보다 중국어를 유창하게 해.|他/说汉语/说得/比我/流利。|Tā shuō Hànyǔ shuō de bǐ wǒ liúlì.'],
+q:['西安热还是北京热？|Xī\'ān rè háishi Běijīng rè?|시안이 더워, 베이징이 더워?|西安比北京还热。|Xī\'ān bǐ Běijīng hái rè.|시안이 베이징보다 더 더워.','你哥哥有你高吗？|Nǐ gēge yǒu nǐ gāo ma?|형(오빠)이 너만큼 커?|他没有我高。|Tā méiyǒu wǒ gāo.|나보다 작아.','学习结束后你打算做什么？|Xuéxí jiéshù hòu nǐ dǎsuàn zuò shénme?|연수 끝나고 뭐 할 계획이야?|我打算去西安旅行。|Wǒ dǎsuàn qù Xī\'ān lǚxíng.|시안으로 여행 갈 거야.','你一个人去吗？|Nǐ yí ge rén qù ma?|혼자 가?|最好找个伴儿，可以互相帮助。|Zuìhǎo zhǎo ge bànr, kěyǐ hùxiāng bāngzhù.|같이 갈 친구를 찾는 게 좋겠어, 서로 도울 수 있으니까.','你对什么感兴趣？|Nǐ duì shénme gǎn xìngqù?|뭐에 관심 있어?|我对中国的名胜古迹很感兴趣。|Wǒ duì Zhōngguó de míngshèng gǔjì hěn gǎn xìngqù.|중국 명승고적에 관심이 많아.','你觉得在国外生活方便吗？|Nǐ juéde zài guówài shēnghuó fāngbiàn ma?|외국 생활 편한 것 같아?|有些方面确实没有国内方便。|Yǒuxiē fāngmiàn quèshí méiyǒu guónèi fāngbiàn.|어떤 면은 확실히 국내만큼 편하지 않아.'],
+m:['___比___。|두 도시나 두 사람을 비교해 말해 보세요.|北京比首尔冷。|Běijīng bǐ Shǒu\'ěr lěng.','我跟___一样___。|나와 누군가의 같은 점을 말해 보세요.|我跟妈妈一样高。|Wǒ gēn māma yíyàng gāo.']},
+
+{n:27,t:'你把自行车放在哪儿了',ko:'자전거 어디에 뒀어?',g:['把 + V到 / 在 / 给 / 成','不是……吗？'],
+c:['把钥匙给我|bǎ yàoshi gěi wǒ|열쇠를 나한테 줘|钥匙','放在车棚里|fàng zài chēpéng li|자전거 보관소에 두다|车棚','用完就还给你|yòng wán jiù huán gěi nǐ|다 쓰면 바로 돌려줄게|还','别着急|bié zháojí|조급해하지 마|着急','把表交给老师|bǎ biǎo jiāo gěi lǎoshī|표를 선생님께 제출하다|交','翻译成英文|fānyì chéng Yīngwén|영어로 번역하다|翻译','把我当成朋友|bǎ wǒ dàngchéng péngyou|나를 친구로 여기다|当成','把邮票贴在信封上|bǎ yóupiào tiē zài xìnfēng shang|우표를 봉투에 붙이다|贴'],
+s:['너 자전거 어디에 뒀어?|你/把/自行车/放在/哪儿了？|Nǐ bǎ zìxíngchē fàng zài nǎr le?','이 표를 사무실로 가져다 주세요.|请/把/这张表/送到/办公室。|Qǐng bǎ zhè zhāng biǎo sòng dào bàngōngshì.','이 글을 중국어로 번역해 줄 수 있어?|你/能/把/这篇文章/翻译成/中文/吗？|Nǐ néng bǎ zhè piān wénzhāng fānyì chéng Zhōngwén ma?','나는 열쇠를 그에게 건넸어.|我/把/钥匙/交给/他/了。|Wǒ bǎ yàoshi jiāo gěi tā le.','우표를 봉투에 붙이세요.|请/把/邮票/贴在/信封上。|Qǐng bǎ yóupiào tiē zài xìnfēng shang.'],
+q:['你把自行车放在哪儿了？|Nǐ bǎ zìxíngchē fàng zài nǎr le?|자전거 어디에 뒀어?|我放在宿舍楼下了。|Wǒ fàng zài sùshè lóu xià le.|기숙사 건물 아래에 뒀어.','能把你的自行车借给我用用吗？|Néng bǎ nǐ de zìxíngchē jiè gěi wǒ yòngyong ma?|네 자전거 좀 빌려줄 수 있어?|没问题，给你钥匙。|Méi wèntí, gěi nǐ yàoshi.|그럼, 여기 열쇠.','你什么时候还给我？|Nǐ shénme shíhou huán gěi wǒ?|언제 돌려줄 거야?|我用完就马上还给你。|Wǒ yòng wán jiù mǎshàng huán gěi nǐ.|다 쓰면 바로 돌려줄게.','这张表交给谁？|Zhè zhāng biǎo jiāo gěi shéi?|이 표는 누구한테 내?|把它交给赵老师吧。|Bǎ tā jiāo gěi Zhào lǎoshī ba.|자오 선생님께 내.','你能帮我把这篇文章翻译成英文吗？|Nǐ néng bāng wǒ bǎ zhè piān wénzhāng fānyì chéng Yīngwén ma?|이 글 영어로 번역해 줄 수 있어?|好，可是我的英文水平不高。|Hǎo, kěshì wǒ de Yīngwén shuǐpíng bù gāo.|좋아, 근데 내 영어 실력이 높진 않아.','你不是学英语的吗？|Nǐ bú shì xué Yīngyǔ de ma?|너 영어 전공 아니었어?|哪儿啊，我是学法语的。|Nǎr a, wǒ shì xué Fǎyǔ de.|아니야, 나 프랑스어 전공이야.'],
+m:['我把___放在___了。|물건을 어디에 두었는지 말해 보세요.|我把手机放在宿舍了。|Wǒ bǎ shǒujī fàng zài sùshè le.','请把___。|把를 써서 친구에게 부탁해 보세요.|请把门关上。|Qǐng bǎ mén guān shang.']},
+
+{n:28,t:'快把空调关上',ko:'빨리 에어컨 꺼',g:['把 (2)','又……了'],
+c:['把空调关上|bǎ kōngtiáo guān shang|에어컨을 끄다|关上','有点儿发烧|yǒudiǎnr fā shāo|열이 좀 나다|发烧','量一下体温|liáng yíxià tǐwēn|체온을 재 보다|量','把嘴张开|bǎ zuǐ zhāng kāi|입을 벌리다|张开','按时吃药|ànshí chī yào|제때 약을 먹다|按时','头疼|tóu téng|머리가 아프다|疼','把烟戒了|bǎ yān jiè le|담배를 끊다|戒','我最怕打针|wǒ zuì pà dǎ zhēn|나는 주사가 제일 무서워|打针'],
+s:['추워, 빨리 에어컨 꺼.|好冷，/快/把/空调/关上/吧。|Hǎo lěng, kuài bǎ kōngtiáo guān shang ba.','어서 옷을 입어.|赶快/把/衣服/穿上。|Gǎnkuài bǎ yīfu chuān shang.','입을 벌려 보세요.|请/把/嘴/张开。|Qǐng bǎ zuǐ zhāng kāi.','공기가 안 좋아, 창문 좀 열자.|空气不好，/把/窗户/打开/吧。|Kōngqì bù hǎo, bǎ chuānghu dǎkāi ba.','밥 먹기 전에 손을 깨끗이 씻어야 해.|吃饭以前，/要/把/手/洗干净。|Chī fàn yǐqián, yào bǎ shǒu xǐ gānjìng.'],
+q:['你怎么了？哪儿不舒服？|Nǐ zěnme le? Nǎr bù shūfu?|왜 그래? 어디 안 좋아?|我头疼，嗓子也疼。|Wǒ tóu téng, sǎngzi yě téng.|머리도 아프고 목도 아파.','你是不是感冒了？|Nǐ shì bu shì gǎnmào le?|너 감기 걸린 거 아니야?|可能是，我有点儿发烧。|Kěnéng shì, wǒ yǒudiǎnr fā shāo.|그런 것 같아, 열이 좀 나.','你愿意打针吗？|Nǐ yuànyì dǎ zhēn ma?|주사 맞을래?|不愿意，我最怕打针。|Bú yuànyì, wǒ zuì pà dǎ zhēn.|싫어요, 주사가 제일 무서워요.','体温多少度？|Tǐwēn duōshao dù?|체온 몇 도야?|三十八度。|Sānshíbā dù.|38도야.','大夫说什么了？|Dàifu shuō shénme le?|의사가 뭐래?|他让我按时吃药，多喝水。|Tā ràng wǒ ànshí chī yào, duō hē shuǐ.|약 제때 먹고 물 많이 마시래.','怎么这么冷？|Zěnme zhème lěng?|왜 이렇게 추워?|我马上把空调关上。|Wǒ mǎshàng bǎ kōngtiáo guān shang.|바로 에어컨 끌게.'],
+m:['快把___。|빨리 해 달라고 부탁해 보세요.|快把窗户打开吧。|Kuài bǎ chuānghu dǎkāi ba.','我有点儿___。|아픈 곳을 말해 보세요.|我有点儿头疼。|Wǒ yǒudiǎnr tóu téng.']},
+
+{n:29,t:'钱包被小偷偷走了',ko:'지갑을 도둑맞았어요',g:['被 / 叫 / 让 (피동)','连……也(都)……'],
+c:['被三轮车撞倒了|bèi sānlúnchē zhuàng dǎo le|삼륜차에 부딪혀 넘어졌다|撞','倒霉透了|dǎoméi tòu le|정말 재수 없다|倒霉','小心点儿|xiǎoxīn diǎnr|조심해|小心','钱包被偷走了|qiánbāo bèi tōu zǒu le|지갑을 도둑맞았다|偷','真不像话|zhēn bú xiànghuà|정말 말도 안 돼|像话','复习听力|fùxí tīnglì|듣기를 복습하다|听力','被雨淋湿了|bèi yǔ lín shī le|비에 흠뻑 젖었다|淋','好主意|hǎo zhǔyi|좋은 생각이야|主意'],
+s:['내 지갑을 도둑이 훔쳐 갔어.|我的钱包/被/小偷/偷走/了。|Wǒ de qiánbāo bèi xiǎotōu tōu zǒu le.','그는 삼륜차에 부딪혀 넘어졌어.|他/被/三轮车/撞倒/了。|Tā bèi sānlúnchē zhuàng dǎo le.','내 자전거는 친구가 빌려 갔어.|我的自行车/让/朋友/借走/了。|Wǒ de zìxíngchē ràng péngyou jiè zǒu le.','녹음기마저 그가 떨어뜨려 고장 냈어.|连/录音机/也/被他/摔坏了。|Lián lùyīnjī yě bèi tā shuāi huài le.','그는 너무 바빠서 밥 먹을 시간조차 없어.|他/忙得/连饭/也/没时间吃。|Tā máng de lián fàn yě méi shíjiān chī.'],
+q:['你的胳膊怎么青了？|Nǐ de gēbo zěnme qīng le?|팔이 왜 퍼렇게 멍들었어?|别提了，我被车撞了一下。|Bié tí le, wǒ bèi chē zhuàng le yíxià.|말도 마, 차에 부딪혔어.','你的钱包呢？|Nǐ de qiánbāo ne?|네 지갑은?|被小偷偷走了，真倒霉！|Bèi xiǎotōu tōu zǒu le, zhēn dǎoméi!|도둑맞았어, 진짜 재수 없어!','丢了多少钱？|Diūle duōshao qián?|얼마 잃어버렸어?|丢了五百多块。|Diūle wǔbǎi duō kuài.|500위안 넘게 잃어버렸어.','你为什么没复习听力？|Nǐ wèishénme méi fùxí tīnglì?|왜 듣기 복습 안 했어?|录音机让我摔坏了。|Lùyīnjī ràng wǒ shuāi huài le.|녹음기를 떨어뜨려서 고장 났어.','你的衣服怎么湿了？|Nǐ de yīfu zěnme shī le?|옷이 왜 젖었어?|我被雨淋湿了。|Wǒ bèi yǔ lín shī le.|비에 흠뻑 젖었어.','我们去找修理师傅，怎么样？|Wǒmen qù zhǎo xiūlǐ shīfu, zěnmeyàng?|수리 기사님 찾아가는 거 어때?|好主意，我们马上去。|Hǎo zhǔyi, wǒmen mǎshàng qù.|좋은 생각이야, 바로 가자.'],
+m:['我的___被___了。|억울했던 일을 被로 말해 보세요.|我的雨伞被朋友拿走了。|Wǒ de yǔsǎn bèi péngyou ná zǒu le.','我连___也___。|~조차 못 한 일을 말해 보세요.|我忙得连饭也没吃。|Wǒ máng de lián fàn yě méi chī.']},
+
+{n:30,t:'祝你一路平安',ko:'가는 길 평안하길',g:['의미상의 피동문','向 / 为 / 代'],
+c:['收拾行李|shōushi xíngli|짐을 싸다|收拾','一路平安|yílù píng\'ān|가는 길 평안하길|平安','多保重|duō bǎozhòng|몸 건강히 잘 지내|保重','给你饯行|gěi nǐ jiànxíng|너를 위해 송별회를 열다|饯行','为友谊干杯|wèi yǒuyì gān bēi|우정을 위해 건배|干杯','舍不得你走|shěbude nǐ zǒu|네가 가는 게 아쉬워|舍不得','办登机手续|bàn dēngjī shǒuxù|탑승 수속을 하다|手续','代我问好|dài wǒ wèn hǎo|나 대신 안부 전해 줘|问好'],
+s:['짐은 다 쌌어요?|行李/都/收拾好/了/吗？|Xíngli dōu shōushi hǎo le ma?','생활은 행복하고 일은 순조롭길 바라요.|祝你/生活幸福，/工作/顺利。|Zhù nǐ shēnghuó xìngfú, gōngzuò shùnlì.','우리의 우정을 위해 건배!|为/我们的/友谊/干杯！|Wèi wǒmen de yǒuyì gān bēi!','사진 뽑으면 나한테 한 장 부쳐 줘.|照片/洗好/以后，/请/给我/寄一张。|Zhàopiàn xǐ hǎo yǐhòu, qǐng gěi wǒ jì yì zhāng.','저 대신 선생님께 안부 전해 주세요.|请/代我/向老师/问好。|Qǐng dài wǒ xiàng lǎoshī wèn hǎo.'],
+q:['行李都收拾好了吗？|Xíngli dōu shōushi hǎo le ma?|짐 다 쌌어?|都收拾好了。|Dōu shōushi hǎo le.|다 쌌어.','护照和机票都拿出来了吧？|Hùzhào hé jīpiào dōu ná chūlai le ba?|여권이랑 비행기표 다 꺼내 놨지?|拿出来了，别担心。|Ná chūlai le, bié dānxīn.|꺼내 놨어, 걱정 마.','下星期我就要回国了，我来向您告别。|Xià xīngqī wǒ jiù yào huí guó le, wǒ lái xiàng nín gào bié.|다음 주에 귀국해서 인사드리러 왔어요.|祝你一路平安！|Zhù nǐ yílù píng\'ān!|가는 길 평안하길 바라!','来，大家举杯！|Lái, dàjiā jǔ bēi!|자, 모두 잔을 들어요!|为我们的友谊干杯！|Wèi wǒmen de yǒuyì gān bēi!|우리의 우정을 위해 건배!','见到西蒙的话，请代我们向他问好。|Jiàn dào Xīméng dehuà, qǐng dài wǒmen xiàng tā wèn hǎo.|시몽 만나면 우리 대신 안부 전해 줘.|我一定转告。|Wǒ yídìng zhuǎngào.|꼭 전할게.','你现在最想说什么？|Nǐ xiànzài zuì xiǎng shuō shénme?|지금 가장 하고 싶은 말은?|我真舍不得你们！|Wǒ zhēn shěbude nǐmen!|너희랑 헤어지기 정말 아쉬워!'],
+m:['祝你___！|친구에게 축원하는 말을 해 보세요.|祝你学习顺利！|Zhù nǐ xuéxí shùnlì!','我舍不得___。|헤어질 때 아쉬운 것을 말해 보세요.|我舍不得这儿的朋友。|Wǒ shěbude zhèr de péngyou.']}
+];
+
+</script>
+<script>
+(function(){
+'use strict';
+const KEY='dtuk_sucheng_xia_v1';
+const STEP_NAMES=['짝꿍어휘','입에 붙이기','내 문장','즉시반응'];
+const STEP_DESC=['함께 쓰는 말을 덩어리로 맞히기','듣고 → 보고 → 가리고 세 번 말하기','문장을 맞추고 내 이야기로 말하기','질문을 듣고 바로 대답하기'];
+const $app=document.getElementById('app');
+// ---------- 모바일: 확대·바운스 막기 ----------
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
+let lastTouch=0;
+document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouch<320&&!e.target.closest('button,select'))e.preventDefault();lastTouch=now},{passive:false});
+document.addEventListener('dblclick',e=>e.preventDefault());
+// ---------- data ----------
+const L=LESSONS.map(l=>({
+  n:l.n,t:l.t,ko:l.ko,g:l.g,
+  c:l.c.map(x=>{const a=x.split('|');return{zh:a[0],py:a[1],ko:a[2],key:a[3]}}),
+  s:l.s.map(x=>{const a=x.split('|');return{ko:a[0],tok:a[1].split('/'),py:a[2]}}),
+  q:l.q.map(x=>{const a=x.split('|');return{q:a[0],qpy:a[1],qko:a[2],a:a[3],apy:a[4],ako:a[5]}}),
+  m:l.m.map(x=>{const a=x.split('|');return{f:a[0],ko:a[1],ex:a[2],expy:a[3]}})
+}));
+const byN=n=>L.find(l=>l.n===n);
+// ---------- state ----------
+let S={xp:0,coins:0,best:{},level:'easy',sound:true};
+try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const lv=()=>Math.floor(Math.sqrt(S.xp/60))+1;
+// ---------- util ----------
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sample=(a,k)=>shuffle(a).slice(0,k);
+function burst(txt){const b=document.getElementById('burst');b.textContent=txt||'툭!';b.classList.remove('go');void b.offsetWidth;b.classList.add('go')}
+// ---------- TTS (기기 내장 음성 우선: 중국 내 오프라인 대응) ----------
+let VOICE=null,voiceTried=false;
+function pickVoice(){
+  if(!('speechSynthesis' in window))return;
+  const vs=speechSynthesis.getVoices();if(!vs.length)return;voiceTried=true;
+  const zh=vs.filter(v=>/^zh/i.test(v.lang)||/chinese|普通话|中文/i.test(v.name));
+  const fem=/(tingting|ting-ting|xiaoxiao|huihui|yaoyao|xiaoyi|xiaohan|lili|shanshan|female|女)/i;
+  const sc=v=>(v.localService?8:0)+(/(CN|Hans)/i.test(v.lang)?4:0)+(fem.test(v.name)?2:0)-(/(HK|TW|yue|Hant)/i.test(v.lang)?6:0);
+  zh.sort((a,b)=>sc(b)-sc(a));VOICE=zh[0]||null;
+}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function speak(text,opt){
+  opt=opt||{};
+  if(!S.sound||!('speechSynthesis' in window)){opt.end&&setTimeout(opt.end,300);return}
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=VOICE?VOICE.lang:'zh-CN';if(VOICE)u.voice=VOICE;
+    u.rate=opt.rate||(S.level==='hard'?1:.85);u.pitch=1.05;
+    let done=false;const fin=()=>{if(!done){done=true;opt.end&&opt.end()}};
+    u.onend=fin;u.onerror=fin;setTimeout(fin,Math.max(2500,text.length*450));
+    speechSynthesis.speak(u);
+  }catch(e){opt.end&&opt.end()}
+}
+function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}}
+// ---------- router ----------
+let cleanup=null;
+function go(fn,...args){if(cleanup){cleanup();cleanup=null}stopSpeak();$app.classList.remove('wide');fn(...args)}
+function topbar(back){
+  return `<div class="bar">${back?'<button class="back" id="bk" aria-label="뒤로">←</button>':''}
+  <div class="logo">덩어리 <b>툭!</b><small>速成·入门下</small></div>
+  <div class="stats"><span class="pill"><i>Lv</i>${lv()}</span><span class="pill"><i>🪙</i>${S.coins}</span></div></div>`;
+}
+function bindBack(fn){const b=document.getElementById('bk');if(b)b.onclick=()=>go(fn)}
+function playtop(label,width){
+  return `<div class="playtop"><button class="back" id="bk" aria-label="그만하기">✕</button>
+    <div class="prog"><i style="width:${width}%"></i></div><span class="combo">${label}</span></div>`;
+}
+// ---------- HOME ----------
+function stepsDone(n){return [0,1,2,3].map(i=>(S.best[n+'-'+i]||0)>=80)}
+function home(){
+  const cards=L.map(l=>{const d=stepsDone(l.n);const all=d.every(Boolean);
+    return `<button class="lcard" data-n="${l.n}">${all?'<span class="stamp">툭</span>':''}
+      <span class="no">${l.n}<small>과</small></span><span class="tt">${esc(l.t)}</span>
+      <span class="pips">${d.map(x=>`<span class="${x?'on':''}"></span>`).join('')}</span></button>`}).join('');
+  $app.innerHTML=topbar()+`
+  <section class="hero"><span class="tuk" aria-hidden="true">툭!</span>
+    <h1>배운 중국어가<br><em>1초 안에 툭!</em></h1>
+    <p>汉语口语速成 입문편(하) 16~30과 · 진담중국어 덩어리훈련™</p>
+    <div class="flow">${STEP_NAMES.map((s,i)=>`<span>${i+1} ${s}</span>`).join('<i>→</i>')}</div>
+  </section>
+  <div class="row" style="justify-content:space-between">
+    <div class="seg" role="group" aria-label="난이도"><button data-lv="easy" aria-pressed="${S.level==='easy'}">쉬운 모드</button><button data-lv="hard" aria-pressed="${S.level==='hard'}">어려운 모드</button></div>
+    <button class="pill" id="snd">${S.sound?'🔊 소리 켜짐':'🔇 소리 꺼짐'}</button>
+  </div>
+  <div class="grid">${cards}</div>
+  ${voiceTried&&!VOICE?'<div class="banner">이 기기에서 중국어 음성을 찾지 못했어요. 「선생님께」의 음성 안내를 확인해 주세요.</div>':''}
+  <div class="foot"><button class="btn dark" id="teach">📺 수업 모드</button><button class="btn" id="about">선생님께</button></div>
+  <p class="credit">기획·제작 <b>진담중국어</b> · 진심을 담은 중국어</p>`;
+  $app.querySelectorAll('.lcard').forEach(b=>b.onclick=()=>go(lesson,+b.dataset.n));
+  $app.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{S.level=b.dataset.lv;save();home()});
+  document.getElementById('snd').onclick=()=>{S.sound=!S.sound;save();home()};
+  document.getElementById('teach').onclick=()=>go(teach,16,0);
+  document.getElementById('about').onclick=()=>go(about);
+}
+// ---------- LESSON ----------
+function lesson(n){
+  const l=byN(n);
+  $app.innerHTML=topbar(true)+`
+  <div class="lhead"><div class="k">第 ${n} 课</div><h1>${esc(l.t)}</h1><p>${esc(l.ko)}</p>
+  <div class="gchips">${l.g.map(g=>`<span>${esc(g)}</span>`).join('')}</div></div>
+  <div class="steps">${STEP_NAMES.map((s,i)=>{const b=S.best[n+'-'+i];const d=(b||0)>=80;
+    return `<button class="stepbtn ${d?'done':''}" data-s="${i}"><span class="n">${d?'✓':i+1}</span>
+    <span><h3>${s}</h3><p>${STEP_DESC[i]}</p></span><span class="sc">${b!=null?b+'%':''}</span></button>`}).join('')}</div>
+  <div class="foot"><button class="btn" id="tm">📺 수업 모드</button><button class="btn primary" id="next">${nextLabel(n)}</button></div>`;
+  bindBack(home);
+  $app.querySelectorAll('.stepbtn').forEach(b=>b.onclick=()=>startStep(n,+b.dataset.s));
+  document.getElementById('tm').onclick=()=>go(teach,n,0);
+  document.getElementById('next').onclick=()=>{const i=[0,1,2,3].find(i=>(S.best[n+'-'+i]||0)<80);startStep(n,i==null?3:i)};
+}
+function nextLabel(n){const i=[0,1,2,3].find(i=>(S.best[n+'-'+i]||0)<80);return i==null?'즉시반응 다시 ▶':`${i+1}단계 시작 ▶`}
+function startStep(n,i){go([pairs,repeat,build,react][i],n)}
+// ---------- 공통: 퀴즈 엔진 (1·4단계) ----------
+function quiz(n,stepIdx,items,cfg){
+  let queue=shuffle(items.map((_,i)=>i)),pos=0,first=new Set(),wrongOnce=new Set(),combo=0,maxCombo=0,gain=0,timerRAF=0,locked=false,alive=true;
+  const total=items.length;
+  const limit=(S.level==='hard'?cfg.hard:cfg.easy)*1000;
+  function draw(){
+    if(pos>=queue.length)return finish();
+    locked=false;const it=items[queue[pos]];
+    $app.innerHTML=playtop(combo>1?combo+' 연속!':'',Math.min(100,pos/queue.length*100))+`
+      <div class="timer"><i id="tm"></i></div>
+      <div class="fill">${it.render()}<div class="fb" id="fb"></div>
+      <div class="opts ${cfg.one?'one':''}" id="opts">${it.options.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div>
+      <div id="after"></div></div>`;
+    document.getElementById('bk').onclick=()=>go(lesson,n);
+    const sb=document.getElementById('say');if(sb)sb.onclick=()=>speak(it.sayQ||it.sayAfter);
+    $app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(+b.dataset.k));
+    if(it.sayQ)setTimeout(()=>{if(alive)speak(it.sayQ)},250);
+    const t0=performance.now();const bar=document.getElementById('tm');
+    const tick=now=>{const r=1-(now-t0)/limit;bar.style.transform=`scaleX(${Math.max(0,r)})`;
+      if(r<=0){choose(-1);return}timerRAF=requestAnimationFrame(tick)};
+    timerRAF=requestAnimationFrame(tick);
+    it._t0=t0;
+  }
+  function choose(k){
+    if(locked)return;locked=true;cancelAnimationFrame(timerRAF);
+    const idx=queue[pos],it=items[idx],ok=k===it.answer;const el=performance.now()-it._t0;
+    const bs=$app.querySelectorAll('.opt');bs.forEach(b=>b.disabled=true);
+    bs[it.answer].classList.add('ok');
+    const fb=document.getElementById('fb');
+    const rev=document.getElementById('reveal');if(rev)rev.hidden=false;const u=$app.querySelector('.qcard .big u');if(u&&it.key)u.textContent=it.key;
+    if(ok){
+      combo++;maxCombo=Math.max(maxCombo,combo);
+      let g=10+Math.min(combo,5)*2;const fast=el<limit*.35;if(fast){g+=5;burst('툭!')}
+      if(!wrongOnce.has(idx))first.add(idx);
+      gain+=g;fb.className='fb ok';fb.textContent=(fast?'툭! 바로 나왔어요 ':'정답! ')+`+${g}`;
+      const myPos=pos;
+      speak(it.sayAfter,{end:()=>{setTimeout(()=>{if(!alive||pos!==myPos)return;pos++;draw()},450)}});
+    }else{
+      combo=0;if(k>=0)bs[k].classList.add('no');
+      wrongOnce.add(idx);
+      queue.splice(Math.min(pos+3,queue.length),0,idx); // 오답 우선 반복
+      fb.className='fb no';fb.textContent=k<0?'시간이 지났어요. 듣고 따라 말해 보세요.':'아쉬워요. 듣고 따라 말해 보세요.';
+      $app.querySelector('.qcard').classList.add('shake');
+      speak(it.sayAfter);
+      document.getElementById('after').innerHTML='<button class="btn dark" id="nx" style="width:100%">따라 말했어요 · 다음 ▶</button>';
+      document.getElementById('nx').onclick=()=>{pos++;draw()};
+    }
+  }
+  function finish(){
+    const pct=Math.round(first.size/total*100);
+    const bonus=pct===100?30:0;
+    reward(n,stepIdx,pct,gain+bonus,{combo:maxCombo,bonus,wrong:[...wrongOnce].map(i=>items[i].review)});
+  }
+  cleanup=()=>{alive=false;cancelAnimationFrame(timerRAF)};
+  draw();
+}
+// ---------- 1단계 짝꿍어휘 ----------
+function pairs(n){
+  const l=byN(n);const keys=[...new Set(l.c.map(c=>c.key))];
+  const items=l.c.map(c=>{
+    const opts=shuffle([c.key,...sample(keys.filter(k=>k!==c.key&&!c.zh.includes(k)),3)]);
+    const blank=esc(c.zh).replace(esc(c.key),'<u>?</u>');
+    return{key:c.key,options:opts,answer:opts.indexOf(c.key),sayAfter:c.zh,review:`${c.zh} · ${c.py} · ${c.ko}`,
+      render:()=>`<div class="qcard"><div class="lab">① 짝꿍어휘 · 빈칸 채우기</div>
+        ${S.level==='easy'?'<button class="say" id="say" aria-label="듣기">🔊</button>':''}
+        <div class="ko">${esc(c.ko)}</div><div class="big">${blank}</div>
+        <div id="reveal" hidden><div class="pyl py">${esc(c.py)}</div></div></div>`}});
+  quiz(n,0,items,{easy:15,hard:8});
+}
+// ---------- 4단계 즉시반응 ----------
+function react(n){
+  const l=byN(n);const hard=S.level==='hard';
+  const items=l.q.map((q,i)=>{
+    const others=l.q.filter((_,j)=>j!==i).map(x=>x.a);
+    const opts=shuffle([q.a,...sample(others,3)]);
+    return{options:opts,answer:opts.indexOf(q.a),sayQ:q.q,sayAfter:q.a,review:`${q.q} → ${q.a} (${q.ako})`,
+      render:()=>`<div class="qcard"><div class="lab">④ 즉시반응 · 듣고 바로 대답</div>
+        <button class="say" id="say" aria-label="다시 듣기">🔊</button>
+        ${hard?'<div class="ko">🎧 질문을 듣고 대답을 고르세요</div>':`<div class="big mid">${esc(q.q)}</div><div class="pyl py">${esc(q.qpy)}</div>`}
+        <div id="reveal" hidden>${hard?`<div class="big mid">${esc(q.q)}</div>`:''}<div class="kol">${esc(q.qko)} → ${esc(q.ako)}</div></div></div>`}});
+  quiz(n,3,items,{easy:15,hard:8,one:true});
+}
+// ---------- 2단계 입에 붙이기 ----------
+function repeat(n){
+  const l=byN(n);const list=l.c;let i=0,r=0;
+  const REP=['듣고 따라 말하기','한자만 보고 말하기','뜻만 보고 말하기'];
+  function draw(){
+    if(i>=list.length){return reward(n,1,100,list.length*6,{combo:0,bonus:0,wrong:[]})}
+    const c=list[i];const hide=r===2;
+    $app.innerHTML=playtop(`${i+1}/${list.length}`,(i*3+r)/(list.length*3)*100)+`
+      <div class="fill"><div class="qcard"><div class="lab">② 입에 붙이기 · ${r+1}번째</div>
+      <button class="say" id="say" aria-label="듣기">🔊</button>
+      <div class="ko">${esc(c.ko)}</div>
+      <div class="big" id="zh" ${hide?'hidden':''}>${esc(c.zh)}</div>
+      <div class="pyl py" id="py" ${r>0?'hidden':''}>${esc(c.py)}</div>
+      <div class="reps">${[0,1,2].map(k=>`<span class="${k<r?'on':''}"></span>`).join('')}</div></div>
+      <p class="hint"><b>${REP[r]}</b><br>${r===0?'소리를 듣고 그대로 따라 말해 보세요.':r===1?'병음을 가렸어요. 한자를 보며 소리 내어 말해요.':'중국어를 가렸어요. 뜻만 보고 먼저 말한 뒤 확인해요.'}</p>
+      <div class="spacer"></div>
+      <div class="ctrls"><button class="btn" id="slow">🐢 천천히</button><button class="btn" id="peek">${hide?'정답 보기':'병음 보기'}</button>
+      <button class="btn primary wide" id="ok">${hide?'말했어요 · 확인 ▶':'따라 말했어요 ▶'}</button></div></div>`;
+    document.getElementById('bk').onclick=()=>go(lesson,n);
+    document.getElementById('say').onclick=()=>speak(c.zh);
+    document.getElementById('slow').onclick=()=>speak(c.zh,{rate:.55});
+    let revealed=!hide;
+    const reveal=()=>{revealed=true;document.getElementById('zh').hidden=false;document.getElementById('py').hidden=false;speak(c.zh);
+      if(hide)document.getElementById('ok').textContent='다음 덩어리 ▶'};
+    document.getElementById('peek').onclick=()=>{if(hide)reveal();else document.getElementById('py').hidden=false};
+    document.getElementById('ok').onclick=()=>{
+      if(!revealed){reveal();burst('툭!');return}
+      r++;if(r>2){r=0;i++}draw()};
+    if(!hide)setTimeout(()=>speak(c.zh),200);
+  }
+  draw();
+}
+// ---------- 3단계 내 문장 ----------
+function build(n){
+  const l=byN(n);const list=shuffle(l.s);let i=0,firstOk=0,gain=0,wrong=[],alive=true;
+  cleanup=()=>{alive=false};
+  function draw(){
+    if(i>=list.length)return mission(0);
+    const s=list[i];let pool=shuffle(s.tok.map((t,k)=>({t,k})));let tries=0;
+    while(pool.map(p=>p.k).join()===s.tok.map((_,k)=>k).join()&&tries++<5)pool=shuffle(pool);
+    let ans=[],missed=false,done=false;
+    function paint(){
+      $app.innerHTML=playtop(`${i+1}/${list.length}`,i/(list.length+2)*100)+`
+      <div class="fill"><div class="qcard"><div class="lab">③ 내 문장 · 순서대로 눌러요</div><div class="ko">${esc(s.ko)}</div>
+      <div class="pyl py" ${done?'':'hidden'}>${esc(s.py)}</div></div>
+      <div class="ans ${done?'ok':''}" id="ans">${ans.map((p,j)=>`<button class="tile" data-a="${j}">${esc(p.t)}</button>`).join('')}</div>
+      <div class="fb" id="fb"></div>
+      <div class="pool">${pool.map((p,j)=>`<button class="tile" data-p="${j}">${esc(p.t)}</button>`).join('')}</div>
+      <div class="spacer"></div><div id="after"></div></div>`;
+      document.getElementById('bk').onclick=()=>go(lesson,n);
+      if(done){
+        const fb=document.getElementById('fb');fb.className='fb ok';fb.textContent=missed?'완성! 소리 내어 읽어 보세요.':'한 번에 완성! 소리 내어 읽어 보세요.';
+        document.getElementById('after').innerHTML='<div class="ctrls"><button class="btn" id="re">🔊 다시 듣기</button><button class="btn primary" id="nx">읽었어요 ▶</button></div>';
+        document.getElementById('re').onclick=()=>speak(s.tok.join(''));
+        document.getElementById('nx').onclick=()=>{i++;draw()};return;
+      }
+      $app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ans.push(pool.splice(+b.dataset.p,1)[0]);check()});
+      $app.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{pool.push(ans.splice(+b.dataset.a,1)[0]);paint()});
+    }
+    function check(){
+      if(pool.length){paint();return}
+      const ok=ans.map(p=>p.t).join('')===s.tok.join('');
+      if(ok){done=true;if(!missed){firstOk++;gain+=15;burst('툭!')}else gain+=8;paint();speak(s.tok.join(''));return}
+      missed=true;wrong.push(`${s.tok.join('')} · ${s.ko}`);paint();
+      const bad=ans.findIndex((p,j)=>p.t!==s.tok[j]);
+      const a=document.getElementById('ans');a.classList.add('no','shake');
+      const tiles=a.querySelectorAll('.tile');if(tiles[bad])tiles[bad].classList.add('hl');
+      const fb=document.getElementById('fb');fb.className='fb no';fb.textContent=`${bad+1}번째부터 달라요. 빨간 토막을 눌러 빼세요.`;
+    }
+    paint();
+  }
+  function mission(k){
+    if(k>=l.m.length){const pct=Math.round(firstOk/list.length*100);return reward(n,2,pct,gain+(pct===100?30:0),{combo:0,bonus:pct===100?30:0,wrong})}
+    const m=l.m[k];
+    $app.innerHTML=playtop(`미션 ${k+1}/2`,(list.length+k)/(list.length+2)*100)+`
+      <div class="fill"><div class="qcard mission"><div class="lab">③ 내 문장 미션</div>
+      <div class="ko">${esc(m.ko)}</div><div class="frame">${esc(m.f)}</div>
+      <div class="ex" id="ex" hidden><span class="zh" style="font-size:24px;font-weight:700">${esc(m.ex)}</span><br><span class="py">${esc(m.expy)}</span></div></div>
+      <p class="hint">정답은 없어요. 내 이야기를 넣어<br>소리 내어 말하면 성공!</p>
+      <div class="spacer"></div>
+      <div class="ctrls"><button class="btn" id="exb">예시 보기</button><button class="btn primary" id="ok">말했어요 ▶</button></div></div>`;
+    document.getElementById('bk').onclick=()=>go(lesson,n);
+    document.getElementById('exb').onclick=()=>{document.getElementById('ex').hidden=false;speak(m.ex)};
+    document.getElementById('ok').onclick=()=>{gain+=15;burst('툭!');const b=document.getElementById('ok');b.disabled=true;setTimeout(()=>{if(alive&&b.isConnected)mission(k+1)},500)};
+  }
+  draw();
+}
+// ---------- 결과 ----------
+function reward(n,step,pct,xp,info){
+  const key=n+'-'+step;const prev=S.best[key];
+  S.best[key]=Math.max(prev||0,pct);S.xp+=xp;const coin=Math.floor(xp/10);S.coins+=coin;save();
+  const passed=pct>=80;
+  $app.innerHTML=topbar()+`<div class="fill res">
+    <div class="bigstamp ${passed?'':'low'}">${passed?'툭!':pct+'%'}</div>
+    <h2>${passed?`${n}과 ${STEP_NAMES[step]}<br>도장 획득!`:'조금만 더 하면 도장!'}</h2>
+    <p class="sub">${step===1?'세 번씩 말하며 입에 붙였어요.':`첫 시도 정답률 ${pct}% · 80% 이상이면 도장`}</p>
+    <div class="lines"><div><span>성장점수</span><b>+${xp}</b></div><div><span>코인</span><b>+${coin}</b></div>
+      ${info.combo>1?`<div><span>최대 연속 정답</span><b>${info.combo}</b></div>`:''}
+      ${info.bonus?`<div><span>전체 정답 보너스</span><b>+${info.bonus}</b></div>`:''}</div>
+    ${info.wrong.length?`<div class="wronglist"><div style="font-weight:900;color:var(--bad)">다시 입에 붙일 덩어리</div>${info.wrong.map(w=>`<div class="zh">${esc(w)}</div>`).join('')}</div>`:''}
+  </div>
+  <div class="foot"><button class="btn" id="again">다시 하기</button>
+    <button class="btn primary" id="nx">${step<3?`다음: ${STEP_NAMES[step+1]} ▶`:(n<30?`${n+1}과로 ▶`:'처음으로')}</button></div>`;
+  document.getElementById('again').onclick=()=>startStep(n,step);
+  document.getElementById('nx').onclick=()=>{if(step<3)startStep(n,step+1);else if(n<30)go(lesson,n+1);else go(home)};
+}
+// ---------- 수업 모드 ----------
+const DECKS=['짝꿍어휘','문장','질문→대답','내 문장'];
+function teach(n,deck){
+  $app.classList.add('wide');
+  const l=byN(n);let order=[],i=0,phase=0,auto=false,shuf=false,cd=0,cdTimer=0;
+  function build(){
+    const src=deck===0?l.c.map(c=>({tag:'짝꿍어휘',p:c.ko,z:c.zh,py:c.py})):
+      deck===1?l.s.map(s=>({tag:'문장 · 한국어 → 중국어',p:s.ko,z:s.tok.join(''),py:s.py})):
+      deck===2?l.q.map(q=>({tag:'질문 → 대답',p:q.q,ppy:q.qpy,pz:true,say:q.q,z:q.a,py:q.apy,ko:q.ako})):
+      l.m.map(m=>({tag:'내 문장 · 각자 말해 보기',p:m.ko,frame:m.f,z:m.ex,py:m.expy}));
+    order=shuf?shuffle(src):src;i=0;phase=0;
+  }
+  function draw(){
+    clearInterval(cdTimer);
+    const it=order[i];
+    $app.innerHTML=topbar(true)+`
+    <div class="tbar"><select id="ln" aria-label="과 선택">${L.map(x=>`<option value="${x.n}" ${x.n===n?'selected':''}>${x.n}과 ${esc(x.t)}</option>`).join('')}</select>
+    <div class="seg" role="group" aria-label="자료">${DECKS.map((d,k)=>`<button data-d="${k}" aria-pressed="${k===deck}">${d}</button>`).join('')}</div>
+    <button class="pill" id="au">${auto?'⏱ 3초 카운트 켜짐':'⏱ 3초 카운트 꺼짐'}</button><button class="pill" id="sh">${shuf?'🔀 섞기 켜짐':'🔀 순서대로'}</button></div>
+    <div class="tstage" id="st"><span class="tag">${esc(it.tag)}</span><span class="num">${i+1} / ${order.length}</span>
+      ${it.pz?`<div class="tz" style="color:var(--ink)">${esc(it.p)}</div><div class="tp">${esc(it.ppy)}</div>`:`<div class="tk">${esc(it.p)}</div>`}
+      ${it.frame?`<div class="tz" style="color:var(--seal)">${esc(it.frame)}</div>`:''}
+      <div id="cd" class="count" ${phase===0&&auto?'':'hidden'}></div>
+      <div id="rv" ${phase===1?'':'hidden'}><div class="tz" style="color:var(--jade)">${esc(it.z)}</div><div class="tp">${esc(it.py)}</div>${it.ko?`<div class="tp">${esc(it.ko)}</div>`:''}</div>
+    </div>
+    <div class="tnav"><button class="btn" id="pv">◀ 이전</button><button class="btn primary" id="tk">${phase===0?'툭! 정답 공개':'다음 ▶'}</button><button class="btn" id="sp">🔊 듣기</button></div>
+    <p class="kbd">스페이스·→ 공개/다음 · ← 이전 · 학생들이 먼저 소리 내어 말한 뒤 공개하세요</p>`;
+    bindBack(home);
+    document.getElementById('ln').onchange=e=>go(teach,+e.target.value,deck);
+    $app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>go(teach,n,+b.dataset.d));
+    document.getElementById('au').onclick=()=>{auto=!auto;phase=0;draw()};
+    document.getElementById('sh').onclick=()=>{shuf=!shuf;build();draw()};
+    document.getElementById('pv').onclick=prev;
+    document.getElementById('tk').onclick=advance;
+    document.getElementById('sp').onclick=()=>speak(phase===0&&it.say?it.say:it.z);
+    if(phase===0){
+      if(it.say)speak(it.say);
+      if(auto){cd=3;const c=document.getElementById('cd');c.textContent=cd;
+        cdTimer=setInterval(()=>{cd--;if(cd<=0){clearInterval(cdTimer);advance()}else c.textContent=cd},1000)}
+    }
+  }
+  function advance(){if(phase===0){phase=1;draw();speak(order[i].z);burst('툭!')}else{if(i<order.length-1){i++;phase=0;draw()}}}
+  function prev(){if(phase===1){phase=0}else if(i>0){i--;phase=0}draw()}
+  const key=e=>{if(e.target.tagName==='SELECT')return;if(e.key===' '||e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();advance()}else if(e.key==='ArrowLeft'){e.preventDefault();prev()}};
+  document.addEventListener('keydown',key);
+  cleanup=()=>{document.removeEventListener('keydown',key);clearInterval(cdTimer)};
+  build();draw();
+}
+// ---------- 선생님께 ----------
+function about(){
+  $app.innerHTML=topbar(true)+`<div class="fill"><div class="doc">
+  <h2>교수님, 이 게임은 이렇게 만들었습니다</h2>
+  <p>《汉语口语速成 입문편(하)》 16~30과를 배우는 학생들이 <b>배운 표현을 1초 안에 말로 꺼낼 수 있도록</b> 만든 수업 보조 게임입니다. 각 과의 단어와 문법 포인트를 그대로 따르고, 그 위에 진담중국어의 <b>덩어리훈련™ 4단계</b>를 얹었습니다.</p>
+  <h3>덩어리훈련™ 4단계</h3>
+  <ol><li><b>짝꿍어휘</b> — 단어를 혼자 외우지 않고, 함께 쓰이는 말과 한 덩어리로 익힙니다. (排队交钱, 买到票, 把空调关上)</li>
+  <li><b>입에 붙이기</b> — 듣고 따라 하기 → 한자만 보고 말하기 → 뜻만 보고 말하기, 한 덩어리를 세 번 말합니다.</li>
+  <li><b>내 문장</b> — 과의 핵심 문형으로 문장을 조립한 뒤, 학생 자신의 이야기로 바꿔 말합니다.</li>
+  <li><b>즉시반응</b> — 질문을 듣고 제한시간 안에 알맞은 대답을 고릅니다. 빨리 맞히면 「툭!」 보너스가 붙습니다.</li></ol>
+  <h3>수업에서 이렇게 써 보세요</h3>
+  <ul><li><b>수업 시작 5분</b> — 수업 모드 「짝꿍어휘」를 띄우고, 한국어를 보면 반 전체가 중국어로 말합니다.</li>
+  <li><b>문법 설명 직후</b> — 수업 모드 「문장」으로 한국어 → 중국어 바꿔 말하기를 합니다.</li>
+  <li><b>회화 연습</b> — 「질문→대답」은 교수님이 질문을 읽고 학생이 바로 대답하는 형식으로 씁니다.</li>
+  <li><b>복습 숙제</b> — 학생들이 휴대폰으로 각 과의 4단계를 끝내고 도장 4개를 모아 옵니다.</li></ul>
+  <h3>중국에서 사용할 때</h3>
+  <ul><li>한 번 열어 두면 인터넷이 없어도 실행됩니다. 휴대폰에서 「홈 화면에 추가」하면 앱처럼 쓸 수 있습니다.</li>
+  <li>발음은 기기에 내장된 중국어 음성으로 나옵니다. 아이폰은 기본 탑재(Tingting)되어 있고, 갤럭시는 출국 전 <b>설정 → 일반 → 텍스트 음성 변환</b>에서 중국어 음성 데이터를 받아 두면 좋습니다.</li>
+  <li>학습 기록과 도장은 각자의 휴대폰에 저장됩니다.</li></ul>
+  <p style="font-size:15px;color:var(--muted)">단어와 문법 범위는 《汉语口语速成 입문편(하)》 각 과를 기준으로 했고, 짝꿍어휘·예문·질문은 말하기 연습을 위해 진담중국어가 새로 만들었습니다. 교재 출판사와 관계없는 비공식 수업 보조 자료입니다.</p>
+  <div class="sig"><b>진담중국어</b> · 진심을 담은 중국어<br>아웃풋에 진심, 배운 중국어가 1초 안에 툭!<br>기획·제작 전진아 (중국어교육 석사)</div>
+  </div></div>`;
+  bindBack(home);
+}
+// ---------- boot ----------
+go(home);
+setTimeout(()=>{if(document.querySelector('.lcard'))home()},1200); // 음성 목록이 늦게 로드되는 기기 대응
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator && location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script>
+</body>
+</html>
