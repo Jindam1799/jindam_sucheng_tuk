@@ -16,13 +16,13 @@
   --bg:#0E1A17; --surface:#16251F; --surface2:#1B2D27; --ink:#EEF5F1; --muted:#B0C4BC; --line:#31473F;
   --jade:#46D0A2; --jade-soft:#173A2F; --seal:#FF6E4B; --seal-soft:#3A211A; --sun:#FFC53D; --bad:#FF8599; --bad-soft:#3A1C24; color-scheme:dark}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-ko);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;user-select:none;-webkit-user-select:none}
+body{display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:var(--f-ko);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;user-select:none;-webkit-user-select:none}
 *{box-sizing:border-box}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
 button:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .zh{font-family:var(--f-zh)} .py{font-family:var(--f-py);color:var(--muted)}
-#app{max-width:600px;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:12px;overflow:hidden;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 14px}
+#app{max-width:600px;width:100%;margin:0 auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 8px}
 #app.wide{max-width:1200px}
 .fill{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 /* top bar */
@@ -31,10 +31,15 @@ button:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-o
 .logo b{color:var(--seal)}
 .logo small{font-family:var(--f-zh);font-size:13px;font-weight:700;color:var(--muted)}
 @media (max-width:460px){.back~.logo small{display:none}}
+@media (max-width:400px){.logo small{display:none}}
 .stats{margin-left:auto;display:flex;gap:6px}
 .pill{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:99px;background:var(--surface);border:1.5px solid var(--line);font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;min-height:40px}
 .pill i{font-style:normal;color:var(--muted);font-weight:700}
 .pill.tg[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pill.lang{font-weight:900;padding:7px 10px;white-space:nowrap}
+.pill{white-space:nowrap}
+.copy{flex:none;margin:0;text-align:center;font-size:11.5px;line-height:1.4;color:var(--muted);padding:0 16px 6px;letter-spacing:.01em}
+.copy b{font-weight:800}
 .pill.snd{width:44px;justify-content:center;padding:0;font-size:18px}
 .back{width:52px;height:52px;flex:none;border-radius:14px;display:grid;place-items:center;background:var(--surface);border:1.5px solid var(--line);font-size:24px;font-weight:800}
 .hero2{flex:none;display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:18px;background:var(--ink);color:var(--bg)}
@@ -266,6 +271,7 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 </style>
 
 <div id="app"></div>
+<p class="copy" id="copy">© 2026 <b>진담중국어</b> · 吴迪 × 전진아 · All rights reserved.</p>
 <div class="burst" id="burst">툭!</div>
 
 <script>
@@ -275,8 +281,51 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 (function(){
 'use strict';
 const KEY='dtuk_sucheng_xia_v1';
-const STEP_NAMES=['짝꿍어휘','입에 붙이기','내 문장','즉시반응'];
-const STEP_DESC=['함께 쓰는 말을 덩어리로 맞히기','듣고 → 보고 → 가리고 세 번 말하기','문장을 맞추고 내 이야기로 말하기','질문을 듣고 바로 대답하기'];
+let LANG='ko';
+try{LANG=localStorage.getItem(KEY+'_lang')||'ko'}catch(e){}
+const UI={
+ko:{steps:['짝꿍어휘','입에 붙이기','내 문장','즉시반응'],
+  desc:['함께 쓰는 말을 덩어리로 맞히기','듣고 → 보고 → 가리고 세 번 말하기','문장을 맞추고 내 이야기로 말하기','질문을 듣고 바로 대답하기'],
+  unit:'과',lessonK:n=>`第 ${n} 课`,hero:'우디 선생님과 진아 선생님이 함께 만든',teach:'📺 수업 모드',about:'선생님께',langBtn:'中文',
+  again3:'즉시반응 다시 ▶',startStep:i=>`${i}단계 시작 ▶`,combo:c=>`${c} 연속!`,
+  fast:'툭! 바로 나왔어요 ',ok:'정답! ',timeUp:'시간이 지났어요. 듣고 따라 말해 보세요.',wrong:'아쉬워요. 듣고 따라 말해 보세요.',nextW:'따라 말했어요 · 다음 ▶',
+  lab1:'① 짝꿍어휘 · 빈칸 채우기',lab4:'④ 즉시반응 · 듣고 바로 대답',lab2:r=>`② 입에 붙이기 · ${r}번째`,
+  rep:['듣고 따라 말하기','한자만 보고 말하기','뜻만 보고 말하기'],
+  repHint:['소리를 듣고 그대로 따라 말해 보세요.','병음을 가렸어요. 한자를 보며 소리 내어 말해요.','중국어를 가렸어요. 뜻만 보고 먼저 말한 뒤 확인해요.'],
+  slow:'🐢 천천히',peekPy:'병음 보기',peekAns:'정답 보기',okSaid:'따라 말했어요 ▶',okCheck:'말했어요 · 확인 ▶',nextChunk:'다음 덩어리 ▶',
+  pyCheck:'<b>병음 확인</b><br>병음을 보고 한 번 더 소리 내어 말해 보세요.',ansCheck:'<b>정답 확인</b><br>내가 말한 것과 같은지 듣고, 한 번 더 따라 말해 보세요.',
+  lab3:'③ 내 문장 · 순서대로 눌러요',build1:'한 번에 완성! 소리 내어 읽어 보세요.',build2:'완성! 소리 내어 읽어 보세요.',replay:'🔊 다시 듣기',read:'읽었어요 ▶',
+  buildBad:b=>`${b}번째부터 달라요. 빨간 토막을 눌러 빼세요.`,mission:k=>`미션 ${k}/2`,labM:'③ 내 문장 미션',
+  mHint:'정답은 없어요. 내 이야기를 넣어<br>소리 내어 말하면 성공!',ex:'예시 보기',said:'말했어요 ▶',
+  pass:(n,st)=>`${n}과 ${st}<br>도장 획득!`,fail:'조금만 더 하면 도장!',sub1:'세 번씩 말하며 입에 붙였어요.',subP:p=>`첫 시도 정답률 ${p}% · 80% 이상이면 도장`,
+  xp:'성장점수',coin:'코인',maxC:'최대 연속 정답',bonus:'전체 정답 보너스',wrongT:'다시 입에 붙일 덩어리',againB:'다시 하기',
+  nextStep:st=>`다음: ${st} ▶`,nextLesson:n=>`${n}과로 ▶`,home:'처음으로',
+  decks:['짝꿍어휘','문장','질문·대답','내 문장'],tags:['짝꿍어휘','문장 · 한국어 → 중국어','질문 → 대답','내 문장 · 각자 말해 보기'],
+  opt:(n,t)=>`${n}과 ${t}`,count:'⏱ 3초 카운트',shuf:'🔀 섞기',prev:'◀ 이전',reveal:'툭! 정답 공개',next:'다음 ▶',listen:'🔊 듣기',
+  kbd:'스페이스·→ 공개/다음 · ← 이전 · 학생들이 먼저 말한 뒤 공개하세요'},
+zh:{steps:['搭配词','说顺口','我的句子','即时反应'],
+  desc:['看意思，选出搭配的词','跟读 → 看汉字 → 只看意思，说三遍','排好句子，再说自己的句子','听问题，马上选出回答'],
+  unit:'课',lessonK:n=>`第 ${n} 课`,hero:'吴迪老师和전진아老师共同制作',teach:'📺 课堂模式',about:'老师说明',langBtn:'한글',
+  again3:'再练即时反应 ▶',startStep:i=>`开始第${i}步 ▶`,combo:c=>`${c}连对！`,
+  fast:'툭！一秒说出来 ',ok:'答对了！',timeUp:'时间到了。听一听，跟着说。',wrong:'差一点！听一听，跟着说。',nextW:'跟读了 · 下一个 ▶',
+  lab1:'① 搭配词 · 填空',lab4:'④ 即时反应 · 听了马上回答',lab2:r=>`② 说顺口 · 第${r}遍`,
+  rep:['听了跟读','只看汉字说','只看意思说'],
+  repHint:['听声音，跟着说。','拼音隐藏了，看汉字大声说。','中文隐藏了，看意思先说，再确认答案。'],
+  slow:'🐢 慢速',peekPy:'看拼音',peekAns:'看答案',okSaid:'跟读了 ▶',okCheck:'说了 · 看答案 ▶',nextChunk:'下一个 ▶',
+  pyCheck:'<b>看拼音</b><br>看着拼音再大声说一遍。',ansCheck:'<b>确认答案</b><br>听一听和自己说的一样吗？再跟着说一遍。',
+  lab3:'③ 我的句子 · 按顺序点',build1:'一次成功！请大声读一读。',build2:'完成！请大声读一读。',replay:'🔊 再听一遍',read:'读了 ▶',
+  buildBad:b=>`从第${b}块开始不对，点红色的块拿出来。`,mission:k=>`任务 ${k}/2`,labM:'③ 我的句子 · 任务',
+  mHint:'没有标准答案。<br>用自己的情况大声说出来就成功！',ex:'看例句',said:'说了 ▶',
+  pass:(n,st)=>`第${n}课 ${st}<br>获得印章！`,fail:'再努力一点就能得到印章！',sub1:'每个词块都说了三遍！',subP:p=>`第一次正确率 ${p}% · 80%以上得印章`,
+  xp:'成长分',coin:'金币',maxC:'最多连对',bonus:'全对奖励',wrongT:'需要再练的词块',againB:'再来一次',
+  nextStep:st=>`下一步：${st} ▶`,nextLesson:n=>`第${n}课 ▶`,home:'回首页',
+  decks:['搭配词','句子','问答','我的句子'],tags:['搭配词','句子 · 韩译中','问答','我的句子 · 自己说'],
+  opt:(n,t)=>`第${n}课 ${t}`,count:'⏱ 3秒倒计时',shuf:'🔀 随机',prev:'◀ 上一个',reveal:'툭！显示答案',next:'下一个 ▶',listen:'🔊 听',
+  kbd:'空格键·→ 显示答案/下一个 · ← 上一个 · 请学生先说，再显示答案'}};
+const U=()=>UI[LANG];
+const G_ZH={16:['正在……呢','有的……有的','一边……一边'],17:['了 (完成)','……了……就……','没(有)……'],18:['了 (变化)','要……了','能 / 可以'],19:['程度补语 得','会'],20:['时量补语','才 / 就','虽然……但是……','因为……所以……'],21:['过 (经历)','是……的','遍 / 次 / 下儿','除了……以外'],22:['着 (持续)','好好儿 / 整整齐齐','地'],23:['结果补语','一……就……'],24:['趋向补语 (来·去)','要是……就……','请 / 叫 / 让'],25:['可能补语','了 (liǎo)','怎么……呢'],26:['比 (比较)','跟……一样','没有 (比较)'],27:['把 + V到/在/给/成','不是……吗？'],28:['把字句 (2)','又……了'],29:['被 / 叫 / 让','连……也(都)……'],30:['意义上的被动句','向 / 为 / 代']};
+let reRender=null;
+function setLang(l){LANG=l;try{localStorage.setItem(KEY+'_lang',l)}catch(e){}}
 const $app=document.getElementById('app');
 // ---------- 모바일: 확대·바운스 막기 ----------
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
@@ -331,14 +380,14 @@ function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}}
 const inApp=/MicroMessenger|KAKAOTALK|QQ\/|Weibo|DingTalk|Line\//i.test(navigator.userAgent);
 // ---------- router ----------
 let cleanup=null;
-function go(fn,...args){if(cleanup){cleanup();cleanup=null}stopSpeak();$app.classList.remove('wide');fn(...args)}
+function go(fn,...args){if(cleanup){cleanup();cleanup=null}stopSpeak();$app.classList.remove('wide');reRender=null;fn(...args)}
 function topbar(back){
   return `<div class="bar">${back?'<button class="back" id="bk" aria-label="뒤로">←</button>':''}
   <div class="logo">덩어리 <b>툭!</b><small>速成·入门下</small></div>
-  <div class="stats"><span class="pill"><i>Lv</i>${lv()}</span><span class="pill"><i>🪙</i>${S.coins}</span><button class="pill snd" id="snd" aria-label="소리 켜기/끄기">${S.sound?'🔊':'🔇'}</button></div></div>`;
+  <div class="stats"><span class="pill"><i>Lv</i>${lv()}</span><span class="pill"><i>🪙</i>${S.coins}</span><button class="pill snd" id="snd" aria-label="소리 켜기/끄기">${S.sound?'🔊':'🔇'}</button>${reRender?`<button class="pill lang" id="lng">${U().langBtn}</button>`:''}</div></div>`;
 }
 function bindBack(fn){const b=document.getElementById('bk');if(b)b.onclick=()=>go(fn)}
-document.addEventListener('click',e=>{const b=e.target.closest('#snd');if(!b)return;S.sound=!S.sound;save();if(!S.sound)stopSpeak();b.textContent=S.sound?'🔊':'🔇'});
+document.addEventListener('click',e=>{if(e.target.closest('#lng')&&reRender){setLang(LANG==='ko'?'zh':'ko');const f=reRender;f();return}const b=e.target.closest('#snd');if(!b)return;S.sound=!S.sound;save();if(!S.sound)stopSpeak();b.textContent=S.sound?'🔊':'🔇'});
 function playtop(label,width){
   return `<div class="playtop"><button class="back" id="bk" aria-label="그만하기">✕</button>
     <div class="prog"><i style="width:${width}%"></i></div><span class="combo">${label}</span></div>`;
@@ -346,15 +395,16 @@ function playtop(label,width){
 // ---------- HOME ----------
 function stepsDone(n){return [0,1,2,3].map(i=>(S.best[n+'-'+i]||0)>=80)}
 function home(){
+  reRender=home;
   const cards=L.map(l=>{const d=stepsDone(l.n);const all=d.every(Boolean);
     return `<button class="lcard" data-n="${l.n}">${all?'<span class="stamp">툭</span>':''}
-      <span class="no">${l.n}<small>과</small></span><span class="tt">${esc(l.t)}</span>
+      <span class="no">${l.n}<small>${U().unit}</small></span><span class="tt">${esc(l.t)}</span>
       <span class="pips">${d.map(x=>`<span class="${x?'on':''}"></span>`).join('')}</span></button>`}).join('');
   $app.innerHTML=topbar()+`
   <section class="hero2"><span class="hseal" aria-hidden="true">툭!</span>
-    <div><p>우디 선생님과 진아 선생님이 함께 만든</p><b>덩어리 툭!</b></div></section>
+    <div><p>${U().hero}</p><b>덩어리 툭!</b></div></section>
   <div class="grid">${cards}</div>
-  <div class="foot"><button class="btn dark" id="teach"><span class="two">📺 수업 모드<small>课堂模式</small></span></button><button class="btn" id="about"><span class="two">선생님께<small>老师说明</small></span></button></div>
+  <div class="foot"><button class="btn dark" id="teach">${U().teach}</button><button class="btn" id="about">${U().about}</button></div>
 `;
   $app.querySelectorAll('.lcard').forEach(b=>b.onclick=()=>go(lesson,+b.dataset.n));
   
@@ -363,20 +413,21 @@ function home(){
 }
 // ---------- LESSON ----------
 function lesson(n){
+  reRender=()=>lesson(n);
   const l=byN(n);
   $app.innerHTML=topbar(true)+`
-  <div class="lhead"><div class="k">第 ${n} 课</div><h1>${esc(l.t)}</h1><p>${esc(l.ko)}</p>
-  <div class="gchips">${l.g.map(g=>`<span>${esc(g)}</span>`).join('')}</div></div>
-  <div class="steps">${STEP_NAMES.map((s,i)=>{const b=S.best[n+'-'+i];const d=(b||0)>=80;
+  <div class="lhead"><div class="k">第 ${n} 课</div><h1>${esc(l.t)}</h1>${LANG==='ko'?`<p>${esc(l.ko)}</p>`:''}
+  <div class="gchips">${(LANG==='zh'?G_ZH[n]:l.g).map(g=>`<span>${esc(g)}</span>`).join('')}</div></div>
+  <div class="steps">${U().steps.map((s,i)=>{const b=S.best[n+'-'+i];const d=(b||0)>=80;
     return `<button class="stepbtn ${d?'done':''}" data-s="${i}"><span class="n">${d?'✓':i+1}</span>
-    <span><h3>${s}</h3><p>${STEP_DESC[i]}</p></span><span class="sc">${b!=null?b+'%':''}</span></button>`}).join('')}</div>
-  <div class="foot"><button class="btn" id="tm">📺 수업 모드</button><button class="btn primary" id="next">${nextLabel(n)}</button></div>`;
+    <span><h3>${s}</h3><p>${U().desc[i]}</p></span><span class="sc">${b!=null?b+'%':''}</span></button>`}).join('')}</div>
+  <div class="foot"><button class="btn" id="tm">${U().teach}</button><button class="btn primary" id="next">${nextLabel(n)}</button></div>`;
   bindBack(home);
   $app.querySelectorAll('.stepbtn').forEach(b=>b.onclick=()=>startStep(n,+b.dataset.s));
   document.getElementById('tm').onclick=()=>go(teach,n,0);
   document.getElementById('next').onclick=()=>{const i=[0,1,2,3].find(i=>(S.best[n+'-'+i]||0)<80);startStep(n,i==null?3:i)};
 }
-function nextLabel(n){const i=[0,1,2,3].find(i=>(S.best[n+'-'+i]||0)<80);return i==null?'즉시반응 다시 ▶':`${i+1}단계 시작 ▶`}
+function nextLabel(n){const i=[0,1,2,3].find(i=>(S.best[n+'-'+i]||0)<80);return i==null?U().again3:U().startStep(i+1)}
 function startStep(n,i){go([pairs,repeat,build,react][i],n)}
 // ---------- 공통: 퀴즈 엔진 (1·4단계) ----------
 function quiz(n,stepIdx,items,cfg){
@@ -386,7 +437,7 @@ function quiz(n,stepIdx,items,cfg){
   function draw(){
     if(pos>=queue.length)return finish();
     locked=false;const it=items[queue[pos]];
-    $app.innerHTML=playtop(combo>1?combo+' 연속!':'',Math.min(100,pos/queue.length*100))+`
+    $app.innerHTML=playtop(combo>1?U().combo(combo):'',Math.min(100,pos/queue.length*100))+`
       <div class="timer"><i id="tm"></i></div>
       <div class="fill">${it.render()}<div class="fb" id="fb"></div>
       <div class="opts ${cfg.one?'one':''}" id="opts">${it.options.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}</div>
@@ -412,17 +463,17 @@ function quiz(n,stepIdx,items,cfg){
       combo++;maxCombo=Math.max(maxCombo,combo);
       let g=10+Math.min(combo,5)*2;const fast=el<limit*.35;if(fast){g+=5;burst('툭!')}
       if(!wrongOnce.has(idx))first.add(idx);
-      gain+=g;fb.className='fb ok';fb.textContent=(fast?'툭! 바로 나왔어요 ':'정답! ')+`+${g}`;
+      gain+=g;fb.className='fb ok';fb.textContent=(fast?U().fast:U().ok)+`+${g}`;
       const myPos=pos;
       speak(it.sayAfter,{end:()=>{setTimeout(()=>{if(!alive||pos!==myPos)return;pos++;draw()},450)}});
     }else{
       combo=0;if(k>=0)bs[k].classList.add('no');
       wrongOnce.add(idx);
       queue.splice(Math.min(pos+3,queue.length),0,idx); // 오답 우선 반복
-      fb.className='fb no';fb.textContent=k<0?'시간이 지났어요. 듣고 따라 말해 보세요.':'아쉬워요. 듣고 따라 말해 보세요.';
+      fb.className='fb no';fb.textContent=k<0?U().timeUp:U().wrong;
       $app.querySelector('.qcard').classList.add('shake');
       speak(it.sayAfter);
-      document.getElementById('after').innerHTML='<button class="btn dark" id="nx" style="width:100%">따라 말했어요 · 다음 ▶</button>';
+      document.getElementById('after').innerHTML='<button class="btn dark" id="nx" style="width:100%">'+U().nextW+'</button>';
       document.getElementById('nx').onclick=()=>{pos++;draw()};
     }
   }
@@ -441,7 +492,7 @@ function pairs(n){
     const opts=shuffle([c.key,...sample(keys.filter(k=>k!==c.key&&!c.zh.includes(k)),3)]);
     const blank=esc(c.zh).replace(esc(c.key),'<u>?</u>');
     return{key:c.key,options:opts,answer:opts.indexOf(c.key),sayAfter:c.zh,review:`${c.zh} · ${c.py} · ${c.ko}`,
-      render:()=>`<div class="qcard"><div class="lab">① 짝꿍어휘 · 빈칸 채우기</div>
+      render:()=>`<div class="qcard"><div class="lab">${U().lab1}</div>
         <button class="say" id="say" aria-label="듣기">🔊</button>
         <div class="ko">${esc(c.ko)}</div><div class="big">${blank}</div>
         <div id="reveal" hidden><div class="pyl py">${esc(c.py)}</div></div></div>`}});
@@ -454,7 +505,7 @@ function react(n){
     const others=l.q.filter((_,j)=>j!==i).map(x=>x.a);
     const opts=shuffle([q.a,...sample(others,3)]);
     return{options:opts,answer:opts.indexOf(q.a),sayQ:q.q,sayAfter:q.a,review:`${q.q} → ${q.a} (${q.ako})`,
-      render:()=>`<div class="qcard"><div class="lab">④ 즉시반응 · 듣고 바로 대답</div>
+      render:()=>`<div class="qcard"><div class="lab">${U().lab4}</div>
         <button class="say" id="say" aria-label="다시 듣기">🔊</button>
         <div class="big mid">${esc(q.q)}</div><div class="pyl py">${esc(q.qpy)}</div>
         <div id="reveal" hidden><div class="kol">${esc(q.qko)} → ${esc(q.ako)}</div></div></div>`}});
@@ -463,30 +514,30 @@ function react(n){
 // ---------- 2단계 입에 붙이기 ----------
 function repeat(n){
   const l=byN(n);const list=l.c;let i=0,r=0;
-  const REP=['듣고 따라 말하기','한자만 보고 말하기','뜻만 보고 말하기'];
+  const REP=U().rep;
   function draw(){
     if(i>=list.length){return reward(n,1,100,list.length*6,{combo:0,bonus:0,wrong:[]})}
     const c=list[i];const hide=r===2;
     $app.innerHTML=playtop(`${i+1}/${list.length}`,(i*3+r)/(list.length*3)*100)+`
-      <div class="fill"><div class="qcard"><div class="lab">② 입에 붙이기 · ${r+1}번째</div>
+      <div class="fill"><div class="qcard"><div class="lab">${U().lab2(r+1)}</div>
       <button class="say" id="say" aria-label="듣기">🔊</button>
       <div class="ko">${esc(c.ko)}</div>
       <div class="big" id="zh">${hide?'<span class="mask">？ ？ ？</span>':esc(c.zh)}</div>
       <div class="pyl py" id="py">${r>0?'':esc(c.py)}</div>
       <div class="reps">${[0,1,2].map(k=>`<span class="${k<r?'on':''}"></span>`).join('')}</div></div>
-      <p class="hint" id="hint"><b>${REP[r]}</b><br>${r===0?'소리를 듣고 그대로 따라 말해 보세요.':r===1?'병음을 가렸어요. 한자를 보며 소리 내어 말해요.':'중국어를 가렸어요. 뜻만 보고 먼저 말한 뒤 확인해요.'}</p>
+      <p class="hint" id="hint"><b>${REP[r]}</b><br>${U().repHint[r]}</p>
       <div class="spacer"></div>
-      <div class="ctrls"><button class="btn" id="slow">🐢 천천히</button><button class="btn" id="peek">${hide?'정답 보기':'병음 보기'}</button>
-      <button class="btn primary wide" id="ok">${hide?'말했어요 · 확인 ▶':'따라 말했어요 ▶'}</button></div></div>`;
+      <div class="ctrls"><button class="btn" id="slow">${U().slow}</button><button class="btn" id="peek">${hide?U().peekAns:U().peekPy}</button>
+      <button class="btn primary wide" id="ok">${hide?U().okCheck:U().okSaid}</button></div></div>`;
     document.getElementById('bk').onclick=()=>go(lesson,n);
     let revealed=!hide;
     document.getElementById('say').onclick=()=>{if(revealed)speak(c.zh)};
     document.getElementById('slow').onclick=()=>{if(revealed)speak(c.zh,{rate:.55})};
-    const showPy=()=>{document.getElementById('py').textContent=c.py;if(r===1)document.getElementById('hint').innerHTML='<b>병음 확인</b><br>병음을 보고 한 번 더 소리 내어 말해 보세요.'};
+    const showPy=()=>{document.getElementById('py').textContent=c.py;if(r===1)document.getElementById('hint').innerHTML=U().pyCheck};
     const reveal=()=>{revealed=true;document.getElementById('zh').textContent=c.zh;showPy();speak(c.zh);
-      document.getElementById('hint').innerHTML='<b>정답 확인</b><br>내가 말한 것과 같은지 듣고, 한 번 더 따라 말해 보세요.';
+      document.getElementById('hint').innerHTML=U().ansCheck;
       const d=document.querySelectorAll('.reps span');if(d[2])d[2].classList.add('on');
-      if(hide)document.getElementById('ok').textContent='다음 덩어리 ▶'};
+      if(hide)document.getElementById('ok').textContent=U().nextChunk};
     document.getElementById('peek').onclick=()=>{if(hide)reveal();else showPy()};
     document.getElementById('ok').onclick=()=>{
       if(!revealed){reveal();burst('툭!');return}
@@ -506,7 +557,7 @@ function build(n){
     let ans=[],missed=false,done=false;
     function paint(){
       $app.innerHTML=playtop(`${i+1}/${list.length}`,i/(list.length+2)*100)+`
-      <div class="fill"><div class="qcard"><div class="lab">③ 내 문장 · 순서대로 눌러요</div><div class="ko">${esc(s.ko)}</div>
+      <div class="fill"><div class="qcard"><div class="lab">${U().lab3}</div><div class="ko">${esc(s.ko)}</div>
       <div class="pyl py" ${done?'':'hidden'}>${esc(s.py)}</div></div>
       <div class="ans ${done?'ok':''}" id="ans">${ans.map((p,j)=>`<button class="tile" data-a="${j}">${esc(p.t)}</button>`).join('')}</div>
       <div class="fb" id="fb"></div>
@@ -514,8 +565,8 @@ function build(n){
       <div class="spacer"></div><div id="after"></div></div>`;
       document.getElementById('bk').onclick=()=>go(lesson,n);
       if(done){
-        const fb=document.getElementById('fb');fb.className='fb ok';fb.textContent=missed?'완성! 소리 내어 읽어 보세요.':'한 번에 완성! 소리 내어 읽어 보세요.';
-        document.getElementById('after').innerHTML='<div class="ctrls"><button class="btn" id="re">🔊 다시 듣기</button><button class="btn primary" id="nx">읽었어요 ▶</button></div>';
+        const fb=document.getElementById('fb');fb.className='fb ok';fb.textContent=missed?U().build2:U().build1;
+        document.getElementById('after').innerHTML=`<div class="ctrls"><button class="btn" id="re">${U().replay}</button><button class="btn primary" id="nx">${U().read}</button></div>`;
         document.getElementById('re').onclick=()=>speak(s.tok.join(''));
         document.getElementById('nx').onclick=()=>{i++;draw()};return;
       }
@@ -530,20 +581,20 @@ function build(n){
       const bad=ans.findIndex((p,j)=>p.t!==s.tok[j]);
       const a=document.getElementById('ans');a.classList.add('no','shake');
       const tiles=a.querySelectorAll('.tile');if(tiles[bad])tiles[bad].classList.add('hl');
-      const fb=document.getElementById('fb');fb.className='fb no';fb.textContent=`${bad+1}번째부터 달라요. 빨간 토막을 눌러 빼세요.`;
+      const fb=document.getElementById('fb');fb.className='fb no';fb.textContent=U().buildBad(bad+1);
     }
     paint();
   }
   function mission(k){
     if(k>=l.m.length){const pct=Math.round(firstOk/list.length*100);return reward(n,2,pct,gain+(pct===100?30:0),{combo:0,bonus:pct===100?30:0,wrong})}
     const m=l.m[k];
-    $app.innerHTML=playtop(`미션 ${k+1}/2`,(list.length+k)/(list.length+2)*100)+`
-      <div class="fill"><div class="qcard mission"><div class="lab">③ 내 문장 미션</div>
+    $app.innerHTML=playtop(U().mission(k+1),(list.length+k)/(list.length+2)*100)+`
+      <div class="fill"><div class="qcard mission"><div class="lab">${U().labM}</div>
       <div class="ko">${esc(m.ko)}</div><div class="frame">${esc(m.f)}</div>
       <div class="ex" id="ex" hidden><span class="zh" style="font-size:24px;font-weight:700">${esc(m.ex)}</span><br><span class="py">${esc(m.expy)}</span></div></div>
-      <p class="hint">정답은 없어요. 내 이야기를 넣어<br>소리 내어 말하면 성공!</p>
+      <p class="hint">${U().mHint}</p>
       <div class="spacer"></div>
-      <div class="ctrls"><button class="btn" id="exb">예시 보기</button><button class="btn primary" id="ok">말했어요 ▶</button></div></div>`;
+      <div class="ctrls"><button class="btn" id="exb">${U().ex}</button><button class="btn primary" id="ok">${U().said}</button></div></div>`;
     document.getElementById('bk').onclick=()=>go(lesson,n);
     document.getElementById('exb').onclick=()=>{document.getElementById('ex').hidden=false;speak(m.ex)};
     document.getElementById('ok').onclick=()=>{gain+=15;burst('툭!');const b=document.getElementById('ok');b.disabled=true;setTimeout(()=>{if(alive&&b.isConnected)mission(k+1)},500)};
@@ -555,47 +606,48 @@ function reward(n,step,pct,xp,info){
   const key=n+'-'+step;const prev=S.best[key];
   S.best[key]=Math.max(prev||0,pct);S.xp+=xp;const coin=Math.floor(xp/10);S.coins+=coin;save();
   const passed=pct>=80;
+  reRender=()=>go(lesson,n);
   $app.innerHTML=topbar()+`<div class="fill res">
     <div class="bigstamp ${passed?'':'low'}">${passed?'툭!':pct+'%'}</div>
-    <h2>${passed?`${n}과 ${STEP_NAMES[step]}<br>도장 획득!`:'조금만 더 하면 도장!'}</h2>
-    <p class="sub">${step===1?'세 번씩 말하며 입에 붙였어요.':`첫 시도 정답률 ${pct}% · 80% 이상이면 도장`}</p>
-    <div class="lines"><div><span>성장점수</span><b>+${xp}</b></div><div><span>코인</span><b>+${coin}</b></div>
-      ${info.combo>1?`<div><span>최대 연속 정답</span><b>${info.combo}</b></div>`:''}
-      ${info.bonus?`<div><span>전체 정답 보너스</span><b>+${info.bonus}</b></div>`:''}</div>
-    ${info.wrong.length?`<div class="wronglist"><div style="font-weight:900;color:var(--bad)">다시 입에 붙일 덩어리</div>${info.wrong.map(w=>`<div class="zh">${esc(w)}</div>`).join('')}</div>`:''}
+    <h2>${passed?U().pass(n,U().steps[step]):U().fail}</h2>
+    <p class="sub">${step===1?U().sub1:U().subP(pct)}</p>
+    <div class="lines"><div><span>${U().xp}</span><b>+${xp}</b></div><div><span>${U().coin}</span><b>+${coin}</b></div>
+      ${info.combo>1?`<div><span>${U().maxC}</span><b>${info.combo}</b></div>`:''}
+      ${info.bonus?`<div><span>${U().bonus}</span><b>+${info.bonus}</b></div>`:''}</div>
+    ${info.wrong.length?`<div class="wronglist"><div style="font-weight:900;color:var(--bad)">${U().wrongT}</div>${info.wrong.map(w=>`<div class="zh">${esc(w)}</div>`).join('')}</div>`:''}
   </div>
-  <div class="foot"><button class="btn" id="again">다시 하기</button>
-    <button class="btn primary" id="nx">${step<3?`다음: ${STEP_NAMES[step+1]} ▶`:(n<30?`${n+1}과로 ▶`:'처음으로')}</button></div>`;
+  <div class="foot"><button class="btn" id="again">${U().againB}</button>
+    <button class="btn primary" id="nx">${step<3?U().nextStep(U().steps[step+1]):(n<30?U().nextLesson(n+1):U().home)}</button></div>`;
   document.getElementById('again').onclick=()=>startStep(n,step);
   document.getElementById('nx').onclick=()=>{if(step<3)startStep(n,step+1);else if(n<30)go(lesson,n+1);else go(home)};
 }
 // ---------- 수업 모드 ----------
-const DECKS=['짝꿍어휘<br>搭配','문장<br>句子','질문·대답<br>问答','내 문장<br>我的句子'];
 function teach(n,deck){
   $app.classList.add('wide');
   const l=byN(n);let order=[],i=0,phase=0,auto=false,shuf=false,cd=0,cdTimer=0;
   function build(){
-    const src=deck===0?l.c.map(c=>({tag:'짝꿍어휘',p:c.ko,z:c.zh,py:c.py})):
-      deck===1?l.s.map(s=>({tag:'문장 · 한국어 → 중국어',p:s.ko,z:s.tok.join(''),py:s.py})):
-      deck===2?l.q.map(q=>({tag:'질문 → 대답',p:q.q,ppy:q.qpy,pz:true,say:q.q,z:q.a,py:q.apy,ko:q.ako})):
-      l.m.map(m=>({tag:'내 문장 · 각자 말해 보기',p:m.ko,frame:m.f,z:m.ex,py:m.expy}));
+    const TG=U().tags;const src=deck===0?l.c.map(c=>({tag:TG[0],p:c.ko,z:c.zh,py:c.py})):
+      deck===1?l.s.map(s=>({tag:TG[1],p:s.ko,z:s.tok.join(''),py:s.py})):
+      deck===2?l.q.map(q=>({tag:TG[2],p:q.q,ppy:q.qpy,pz:true,say:q.q,z:q.a,py:q.apy,ko:q.ako})):
+      l.m.map(m=>({tag:TG[3],p:m.ko,frame:m.f,z:m.ex,py:m.expy}));
     order=shuf?shuffle(src):src;i=0;phase=0;
   }
   function draw(){
     clearInterval(cdTimer);
     const it=order[i];
+    reRender=()=>{build();draw()};
     $app.innerHTML=topbar(true)+`
-    <div class="tbar"><select id="ln" aria-label="과 선택">${L.map(x=>`<option value="${x.n}" ${x.n===n?'selected':''}>${x.n}과 第${x.n}课 ${esc(x.t)}</option>`).join('')}</select>
-    <div class="seg" role="group" aria-label="자료">${DECKS.map((d,k)=>`<button data-d="${k}" aria-pressed="${k===deck}">${d}</button>`).join('')}</div>
-    <div class="ttog"><button class="pill tg" id="au" aria-pressed="${auto}">⏱ 3초 카운트 · 倒计时</button><button class="pill tg" id="sh" aria-pressed="${shuf}">🔀 섞기 · 随机</button></div></div>
+    <div class="tbar"><select id="ln" aria-label="과 선택">${L.map(x=>`<option value="${x.n}" ${x.n===n?'selected':''}>${U().opt(x.n,esc(x.t))}</option>`).join('')}</select>
+    <div class="seg" role="group" aria-label="자료">${U().decks.map((d,k)=>`<button data-d="${k}" aria-pressed="${k===deck}">${d}</button>`).join('')}</div>
+    <div class="ttog"><button class="pill tg" id="au" aria-pressed="${auto}">${U().count}</button><button class="pill tg" id="sh" aria-pressed="${shuf}">${U().shuf}</button></div></div>
     <div class="tstage" id="st"><span class="tag">${esc(it.tag)}</span><span class="num">${i+1} / ${order.length}</span>
       ${it.pz?`<div class="tz" style="color:var(--ink)">${esc(it.p)}</div><div class="tp">${esc(it.ppy)}</div>`:`<div class="tk">${esc(it.p)}</div>`}
       ${it.frame?`<div class="tz" style="color:var(--seal)">${esc(it.frame)}</div>`:''}
       <div id="cd" class="count" ${phase===0&&auto?'':'hidden'}></div>
       <div id="rv" ${phase===1?'':'hidden'}><div class="tz" style="color:var(--jade)">${esc(it.z)}</div><div class="tp">${esc(it.py)}</div>${it.ko?`<div class="tp">${esc(it.ko)}</div>`:''}</div>
     </div>
-    <div class="tnav"><button class="btn" id="pv"><span class="two">◀ 이전<small>上一个</small></span></button><button class="btn primary" id="tk">${phase===0?'<span class="two">툭! 정답 공개<small>显示答案</small></span>':'<span class="two">다음 ▶<small>下一个</small></span>'}</button><button class="btn" id="sp"><span class="two">🔊 듣기<small>听</small></span></button></div>
-    <p class="kbd">스페이스·→ 공개/다음 · ← 이전 · 학생들이 먼저 말한 뒤 공개하세요<br>空格键·→ 显示答案/下一个 · ← 上一个 · 请学生先说，再显示答案</p>`;
+    <div class="tnav"><button class="btn" id="pv">${U().prev}</button><button class="btn primary" id="tk">${phase===0?U().reveal:U().next}</button><button class="btn" id="sp">${U().listen}</button></div>
+    <p class="kbd">${U().kbd}</p>`;
     bindBack(home);
     document.getElementById('ln').onchange=e=>go(teach,+e.target.value,deck);
     $app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>go(teach,n,+b.dataset.d));
@@ -618,8 +670,6 @@ function teach(n,deck){
   build();draw();
 }
 // ---------- 소개 팝업 + 선생님 안내 (한국어 / 中文) ----------
-let LANG='ko';
-try{LANG=localStorage.getItem(KEY+'_lang')||'ko'}catch(e){}
 const T={
 ko:{start:'시작하기 ▶',guide:'선생님 안내',back:'← 소개로',close:'닫기',
   lead:'<span class="nw"><b>吴迪</b> 선생님과</span><br><span class="nw"><b>진담중국어 전진아</b> 선생님이</span><br>함께 만들었습니다.',
@@ -688,7 +738,7 @@ function openModal(view){
       foot=`<div class="sheet-f">${last?`<button class="btn" data-gp="0">${LANG==='zh'?'← 第一页':'← 처음으로'}</button>`:`<button class="btn" id="mstart">${m.dataset.fromIntro?t.start:t.close}</button>`}<button class="btn primary" ${last?'id="mstart"':`data-gp="${guidePage+1}"`}>${last?(m.dataset.fromIntro?t.start:t.close):(LANG==='zh'?'下一页 ▶':'다음 ▶')}</button></div>`;
     }
     m.innerHTML=`<div class="sheet">${head}<div class="sheet-b">${body}</div>${foot}</div>`;
-    m.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;try{localStorage.setItem(KEY+'_lang',LANG)}catch(e){}paint()});
+    m.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{setLang(b.dataset.lang);paint();if(reRender)reRender()});
     const gb=m.querySelector('#mguide');if(gb)gb.onclick=()=>{view='guide';m.dataset.fromIntro='1';paint()};
     const bb=m.querySelector('#mback');if(bb)bb.onclick=()=>{view='intro';paint()};
     m.querySelectorAll('[data-gp]').forEach(b=>b.onclick=()=>{guidePage=+b.dataset.gp;paint()});
