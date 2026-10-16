@@ -5,7 +5,10 @@ art=app.replace('/*__DATA__*/',data)
 open('dist_artifact.html','w',encoding='utf-8').write(art)
 m=re.match(r'(<title>.*?</title>)\s*<meta name="claude:viewport-fit-sides" content="cover">\s*(<style>.*?</style>)(.*)',art,re.S)
 title,style,body=m.group(1),m.group(2),m.group(3)
-ver=hashlib.md5(art.encode()).hexdigest()[:8]
+_h=hashlib.md5(art.encode())
+for _f in sorted(os.listdir('site/icons')) if os.path.isdir('site/icons') else []:
+  _h.update(open(os.path.join('site/icons',_f),'rb').read())
+ver=_h.hexdigest()[:8]
 pwa='''<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
