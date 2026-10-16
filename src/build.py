@@ -7,8 +7,8 @@ m=re.match(r'(<title>.*?</title>)\s*<meta name="claude:viewport-fit-sides" conte
 title,style,body=m.group(1),m.group(2),m.group(3)
 ver=hashlib.md5(art.encode()).hexdigest()[:8]
 pwa='''<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="덩어리 툭">'''
@@ -38,11 +38,12 @@ open('site/index.html','w',encoding='utf-8').write(page(True))      # GitHub Pag
 open('site/manifest.webmanifest','w',encoding='utf-8').write(json.dumps({
  "name":"덩어리 툭! 速成 入门下","short_name":"덩어리 툭","start_url":"./","scope":"./","display":"standalone",
  "orientation":"portrait","background_color":"#EDF3EF","theme_color":"#11291F","lang":"ko",
- "icons":[{"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-          {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]},ensure_ascii=False,indent=1))
+ "icons":[{"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+          {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+          {"src":"icons/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]},ensure_ascii=False,indent=1))
 open('site/sw.js','w',encoding='utf-8').write(f'''// 덩어리 툭! 오프라인 캐시 (버전 {ver})
 const CACHE='dtuk-{ver}';
-const FILES=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
+const FILES=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon.png','./icons/favicon-64.png'];
 self.addEventListener('install',e=>{{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))}});
 self.addEventListener('activate',e=>{{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))}});
 // 화면은 인터넷이 되면 최신본, 안 되면 저장본
