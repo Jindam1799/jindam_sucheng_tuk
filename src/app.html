@@ -205,7 +205,7 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 .intro{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
 .iseal{width:96px;height:96px;border:5px solid var(--seal);border-radius:50%;display:grid;place-items:center;color:var(--seal);font-weight:900;font-size:34px;transform:rotate(-10deg)}
 .ibook{margin:0;font-size:15px;font-weight:800;color:var(--muted)}
-.ilead{margin:0;font-size:21px;line-height:1.5;font-weight:600;text-wrap:balance}
+.ilead{margin:0;font-size:19px;line-height:1.5;font-weight:600}
 .ilead b{font-weight:900}
 .makers{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
 .maker{flex:1;max-width:190px;display:flex;flex-direction:column;gap:2px;padding:12px 8px;border-radius:16px;background:var(--surface2);border:1.5px solid var(--line)}
@@ -214,14 +214,14 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 .mx{font-size:22px;font-weight:900;color:var(--seal)}
 .itag{margin:2px 0 0;font-size:20px;font-weight:900}
 .itag em{font-style:normal;color:var(--seal)}
-.isteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.isteps li{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;background:var(--jade-soft);color:var(--ink);font-weight:800;font-size:16px;text-align:left}
+.isteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%}
+.isteps li{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:14px;background:var(--jade-soft);color:var(--ink);font-weight:800;font-size:14px;text-align:center;line-height:1.2;word-break:keep-all}
 .isteps li span{flex:none;width:28px;height:28px;border-radius:9px;background:var(--jade);color:#fff;display:grid;place-items:center;font-size:15px}
 .guide{display:flex;flex-direction:column;gap:14px;height:100%}
 .gtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);flex:none}
 .gtabs button{min-height:42px;border-radius:10px;font-weight:800;font-size:15px;color:var(--muted);line-height:1.2;padding:4px}
 .gtabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
-.gpage{display:flex;flex-direction:column;gap:10px}
+.gpage{display:flex;flex-direction:column;gap:8px}
 .guide h3{margin:4px 0 0;font-size:18px;color:var(--seal)}
 .guide p{margin:0}
 .glead{font-size:17px;line-height:1.6;text-align:center;padding:4px 0}
@@ -240,7 +240,7 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 .gdot{margin:0;padding:0;list-style:none;display:grid;gap:8px}
 .gdot li{font-size:16px;line-height:1.5;padding:10px 12px;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}
 .gnote{font-size:14px;color:var(--muted);line-height:1.5}
-.gsig{padding:12px;border-radius:14px;background:var(--seal-soft);font-size:16px;line-height:1.5;text-align:center}
+.gsig{padding:10px 12px;border-radius:14px;background:var(--seal-soft);font-size:16px;line-height:1.5;text-align:center}
 @media (max-height:720px){
   .modal{padding:8px}.sheet{border-radius:20px}.sheet-h,.sheet-f{padding:8px 12px}.sheet-f .btn{min-height:50px;font-size:17px}
   .sheet-b{padding:12px 14px!important}.guide{gap:10px}.gpage{gap:7px}.gtabs button{min-height:38px;font-size:14px}
@@ -252,7 +252,9 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
   .intro{gap:8px!important}.iseal{width:64px!important;height:64px!important;font-size:22px!important;border-width:4px}
   .ilead{font-size:18px!important}.maker{padding:8px 6px}.maker b{font-size:21px!important}.itag{font-size:18px}.isteps li{padding:7px 10px;font-size:15px}
 }
-@media (max-height:660px){.iseal{display:none}.ibook{font-size:13.5px}.gdot li{padding:5px 9px!important}}
+.intro{gap:10px!important}
+@media (max-height:760px){.ivoc{font-size:14px;padding:7px 10px}.contact{padding:8px 10px;gap:6px}.btn.kakao{min-height:44px;font-size:15px}.cids{font-size:14px}.ilead{font-size:17.5px!important}.itag{font-size:17px}.isteps li{padding:6px 3px;font-size:13.5px}.intro{gap:8px!important}}
+@media (max-height:660px){.iseal{display:none}.ibook{display:none}.gdot li{padding:5px 9px!important}}
 @media (max-height:700px){.iseal{width:72px;height:72px;font-size:26px}.ilead{font-size:19px}.maker b{font-size:22px}.intro{gap:9px}.sheet-b{padding:16px}.gsteps div{padding:8px 10px}.gdot li{padding:8px 10px;font-size:15px}.gnum li p{font-size:15px}.guse div{padding:8px 10px}.glead{font-size:16px}}
 /* 단어장 */
 .vsheet{max-width:600px;height:100%}
@@ -272,6 +274,15 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 .vnote.warn{padding:10px 12px;border-radius:12px;background:var(--seal-soft);color:var(--ink)}
 .vt{font-size:19px}
 .gtabs small{font-weight:700;opacity:.7}
+/* 소개 팝업: 단어장 안내 · 문의 */
+.ivoc{margin:0;width:100%;padding:9px 12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);font-size:15px;line-height:1.5;text-align:left}
+.contact{width:100%;display:grid;gap:8px;padding:10px 12px;border-radius:16px;border:1.5px dashed var(--line)}
+.cids{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 10px;font-size:15px}
+.cids b{font-family:var(--f-py);font-size:16px;user-select:all;-webkit-user-select:all}
+.clab{font-weight:900;color:var(--seal)}
+.btn.kakao{min-height:48px;font-size:16px;background:#FEE500;border-color:#FEE500;color:#191600;text-decoration:none}
+.gcontact{margin-top:6px;font-size:14px;color:var(--muted)}
+.gcontact b{color:var(--ink);font-family:var(--f-py)}
 /* 선생님께 */
 .doc{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:20px;user-select:text;-webkit-user-select:text}
 .doc h2{margin:0 0 8px;font-size:22px;line-height:1.35}
@@ -696,16 +707,20 @@ function teach(n,deck){
 // ---------- 소개 팝업 + 선생님 안내 (한국어 / 中文) ----------
 const T={
 ko:{start:'시작하기 ▶',guide:'선생님 안내',back:'← 소개로',close:'닫기',
-  lead:'<span class="nw"><b>吴迪</b> 선생님과</span><br><span class="nw"><b>진담중국어 전진아</b> 선생님이</span><br>함께 만들었습니다.',
+  lead:'<span class="nw"><b>吴迪</b> 선생님과</span> <span class="nw"><b>진담중국어 전진아</b> 선생님이</span><br>함께 만들었습니다.',
   m1:['吴迪','우디 선생님'],m2:['전진아','진담중국어'],
   tag:'배운 중국어가 <em>1초 안에 툭!</em>',
   steps:['짝꿍어휘','입에 붙이기','내 문장','즉시반응'],
+  voc:'<b>📖 단어장</b> 게임 중 언제든 위쪽 📖를 누르면 교재 단어 · 추가 단어 · 짝꿍어휘를 볼 수 있어요.',
+  ask:'문의',kakao:'카카오톡',wechat:'위챗',chat:'💬 카카오톡 채팅으로 문의하기',
   book:'汉语口语速成 입문편(하) 16~30과'},
 zh:{start:'开始 ▶',guide:'老师说明',back:'← 返回',close:'关闭',
   lead:'本游戏由 <span class="nw"><b>吴迪老师</b> 和</span><br><span class="nw"><b>진담중국어 전진아老师</b></span><br>共同制作。',
   m1:['吴迪','Wú Dí 老师'],m2:['전진아','진담중국어 老师'],
   tag:'学过的中文，<em>一秒说出来！</em>',
   steps:['搭配词','说顺口','我的句子','即时反应'],
+  voc:'<b>📖 词汇表</b> 游戏中随时点上方 📖<br>查看教材生词、新增词语和搭配词。',
+  ask:'咨询',kakao:'KakaoTalk',wechat:'微信',chat:'💬 KakaoTalk 在线咨询',
   book:'汉语口语速成·入门篇(下) 第16–30课'}};
 const GUIDE={
 ko:{tabs:['4단계','수업 모드','중국에서'],
@@ -731,6 +746,9 @@ zh:{tabs:['四个步骤','课堂模式','在中国使用'],
     note:'为保护教材版权，本游戏没有直接使用课文原文，而是用相同的词汇和语法对句子做了修改。新增的词语请在 📖 词汇表的“新增词语”里查看。本资料与出版社无关，是非官方材料。',
     sig:'<span class="nw"><b>吴迪老师</b></span> × <span class="nw"><b>진담중국어 전진아老师</b></span>'}}};
 let guidePage=0;
+const KAKAO_URL='https://pf.kakao.com/_jZYxmxj';
+function contactBox(t){return `<div class="contact"><div class="cids"><span class="clab">${t.ask}</span><span>${t.kakao} ID <b>jindam1799</b></span><span>${t.wechat} ID <b>jindam1799</b></span></div>
+  <a class="btn kakao" href="${KAKAO_URL}" target="_blank" rel="noopener">${t.chat}</a></div>`}
 function openModal(view){
   guidePage=0;
   const old=document.getElementById('modal');if(old)old.remove();
@@ -745,18 +763,18 @@ function openModal(view){
     let body,foot;
     if(view==='intro'){
       body=`<div class="intro" lang="${LANG==='zh'?'zh-CN':'ko'}">
-        <div class="iseal" aria-hidden="true">툭!</div>
         <p class="ibook zh">${t.book}</p>
         <p class="ilead">${t.lead}</p>
-        <div class="makers"><div class="maker"><b class="zh">${t.m1[0]}</b><span>${t.m1[1]}</span></div><span class="mx">×</span><div class="maker"><b>${t.m2[0]}</b><span>${t.m2[1]}</span></div></div>
         <p class="itag">${t.tag}</p>
-        <ol class="isteps">${t.steps.map((x,i)=>`<li><span>${i+1}</span>${x}</li>`).join('')}</ol></div>`;
+        <ol class="isteps">${t.steps.map((x,i)=>`<li><span>${i+1}</span>${x}</li>`).join('')}</ol>
+        <p class="ivoc">${t.voc}</p>
+        ${contactBox(t)}</div>`;
       foot=`<div class="sheet-f"><button class="btn" id="mguide">${t.guide}</button><button class="btn primary" id="mstart">${t.start}</button></div>`;
     }else{
       const pg=guidePage;
       const inner=pg===0?`<p class="glead">${g.p1.lead}</p><div class="gsteps">${g.p1.steps.map((x,i)=>`<div><span class="gn">${i+1}</span><b>${x[0]}</b><p>${x[1]}</p></div>`).join('')}</div>`
         :pg===1?`<h3>${g.p2.h}</h3><ol class="gnum">${g.p2.list.map((x,i)=>`<li><span>${i+1}</span><p>${x}</p></li>`).join('')}</ol><h3>${g.p2.h2}</h3><div class="guse">${g.p2.use.map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>`
-        :`<h3>${g.p3.h}</h3><ul class="gdot">${g.p3.list.map(x=>`<li>${x}</li>`).join('')}</ul><p class="gnote">${g.p3.note}</p><div class="gsig">${g.p3.sig}</div>`;
+        :`<h3>${g.p3.h}</h3><ul class="gdot">${g.p3.list.map(x=>`<li>${x}</li>`).join('')}</ul><p class="gnote">${g.p3.note}</p><div class="gsig">${g.p3.sig}<div class="gcontact">${T[LANG].ask} · ${T[LANG].kakao} ID <b>jindam1799</b> · ${T[LANG].wechat} ID <b>jindam1799</b></div></div>`;
       body=`<div class="guide" lang="${LANG==='zh'?'zh-CN':'ko'}"><div class="gtabs" role="tablist">${g.tabs.map((x,i)=>`<button role="tab" data-gp="${i}" aria-selected="${i===pg}">${x}</button>`).join('')}</div><div class="gpage">${inner}</div></div>`;
       const last=guidePage===2;
       foot=`<div class="sheet-f">${last?`<button class="btn" data-gp="0">${LANG==='zh'?'← 第一页':'← 처음으로'}</button>`:`<button class="btn" id="mstart">${m.dataset.fromIntro?t.start:t.close}</button>`}<button class="btn primary" ${last?'id="mstart"':`data-gp="${guidePage+1}"`}>${last?(m.dataset.fromIntro?t.start:t.close):(LANG==='zh'?'下一页 ▶':'다음 ▶')}</button></div>`;
