@@ -472,7 +472,7 @@ function repeat(n){
       <div class="big" id="zh">${hide?'<span class="mask">？ ？ ？</span>':esc(c.zh)}</div>
       <div class="pyl py" id="py">${r>0?'':esc(c.py)}</div>
       <div class="reps">${[0,1,2].map(k=>`<span class="${k<r?'on':''}"></span>`).join('')}</div></div>
-      <p class="hint"><b>${REP[r]}</b><br>${r===0?'소리를 듣고 그대로 따라 말해 보세요.':r===1?'병음을 가렸어요. 한자를 보며 소리 내어 말해요.':'중국어를 가렸어요. 뜻만 보고 먼저 말한 뒤 확인해요.'}</p>
+      <p class="hint" id="hint"><b>${REP[r]}</b><br>${r===0?'소리를 듣고 그대로 따라 말해 보세요.':r===1?'병음을 가렸어요. 한자를 보며 소리 내어 말해요.':'중국어를 가렸어요. 뜻만 보고 먼저 말한 뒤 확인해요.'}</p>
       <div class="spacer"></div>
       <div class="ctrls"><button class="btn" id="slow">🐢 천천히</button><button class="btn" id="peek">${hide?'정답 보기':'병음 보기'}</button>
       <button class="btn primary wide" id="ok">${hide?'말했어요 · 확인 ▶':'따라 말했어요 ▶'}</button></div></div>`;
@@ -480,8 +480,10 @@ function repeat(n){
     let revealed=!hide;
     document.getElementById('say').onclick=()=>{if(revealed)speak(c.zh)};
     document.getElementById('slow').onclick=()=>{if(revealed)speak(c.zh,{rate:.55})};
-    const showPy=()=>{document.getElementById('py').textContent=c.py};
+    const showPy=()=>{document.getElementById('py').textContent=c.py;if(r===1)document.getElementById('hint').innerHTML='<b>병음 확인</b><br>병음을 보고 한 번 더 소리 내어 말해 보세요.'};
     const reveal=()=>{revealed=true;document.getElementById('zh').textContent=c.zh;showPy();speak(c.zh);
+      document.getElementById('hint').innerHTML='<b>정답 확인</b><br>내가 말한 것과 같은지 듣고, 한 번 더 따라 말해 보세요.';
+      const d=document.querySelectorAll('.reps span');if(d[2])d[2].classList.add('on');
       if(hide)document.getElementById('ok').textContent='다음 덩어리 ▶'};
     document.getElementById('peek').onclick=()=>{if(hide)reveal();else showPy()};
     document.getElementById('ok').onclick=()=>{
