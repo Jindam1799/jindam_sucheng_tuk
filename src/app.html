@@ -156,6 +156,47 @@ select{font:inherit;font-size:17px;font-weight:800;padding:10px 12px;border-radi
 .tstage .num{position:absolute;right:18px;top:14px;font-size:17px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums}
 .tnav{display:grid;grid-template-columns:1fr 2fr 1fr;gap:10px;flex:none}
 .kbd{font-size:14px;color:var(--muted);text-align:center;margin:0;flex:none}
+/* 소개 팝업 · 선생님 안내 */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(8,18,14,.58);display:flex;align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));animation:fade .2s ease-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{background:var(--surface);color:var(--ink);border-radius:26px;width:100%;max-width:540px;max-height:100%;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.sheet-h{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.sheet-brand{font-weight:900;font-size:20px}.sheet-brand b{color:var(--seal)}
+.sheet-b{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:22px 20px;user-select:text;-webkit-user-select:text}
+.sheet-f{flex:none;display:grid;grid-template-columns:1fr 1.4fr;gap:10px;padding:12px 14px;border-top:1px solid var(--line)}
+.sheet-f.one{grid-template-columns:1fr}
+.intro,.guide{word-break:keep-all}
+.intro{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.iseal{width:96px;height:96px;border:5px solid var(--seal);border-radius:50%;display:grid;place-items:center;color:var(--seal);font-weight:900;font-size:34px;transform:rotate(-10deg)}
+.ibook{margin:0;font-size:15px;font-weight:800;color:var(--muted)}
+.ilead{margin:0;font-size:21px;line-height:1.5;font-weight:600;text-wrap:balance}
+.ilead b{font-weight:900}
+.makers{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.maker{flex:1;max-width:190px;display:flex;flex-direction:column;gap:2px;padding:12px 8px;border-radius:16px;background:var(--surface2);border:1.5px solid var(--line)}
+.maker b{font-size:26px;font-weight:900;line-height:1.2}
+.maker span{font-size:14.5px;color:var(--muted);font-weight:700}
+.mx{font-size:22px;font-weight:900;color:var(--seal)}
+.itag{margin:2px 0 0;font-size:20px;font-weight:900}
+.itag em{font-style:normal;color:var(--seal)}
+.isteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.isteps li{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;background:var(--jade-soft);color:var(--ink);font-weight:800;font-size:16px;text-align:left}
+.isteps li span{flex:none;width:28px;height:28px;border-radius:9px;background:var(--jade);color:#fff;display:grid;place-items:center;font-size:15px}
+.guide h2{margin:0 0 8px;font-size:23px}
+.guide h3{margin:22px 0 10px;font-size:18px;color:var(--seal)}
+.guide p{margin:0;font-size:16.5px;line-height:1.7}
+.gsteps{display:grid;gap:8px}
+.gsteps div{display:grid;grid-template-columns:34px 1fr;column-gap:10px;align-items:start;padding:12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}
+.gsteps .gn{grid-row:span 2;width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:900}
+.gsteps b{font-size:17px}.gsteps p{font-size:15.5px;color:var(--muted);line-height:1.5}
+.glist{margin:0;padding-left:22px;display:grid;gap:6px}
+.glist li{font-size:16px;line-height:1.6}
+.guse{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.guse div{display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:14px;border:1px solid var(--line)}
+.guse b{font-size:16px}.guse span{font-size:15px;color:var(--muted);line-height:1.45}
+.gnote{margin-top:20px!important;font-size:14px!important;color:var(--muted)}
+.gsig{margin-top:14px;padding:14px;border-radius:14px;background:var(--seal-soft);font-size:15.5px;line-height:1.6;text-align:center}
+@media (max-height:700px){.iseal{width:72px;height:72px;font-size:26px}.ilead{font-size:19px}.maker b{font-size:22px}.intro{gap:9px}}
 /* 선생님께 */
 .doc{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:20px;user-select:text;-webkit-user-select:text}
 .doc h2{margin:0 0 8px;font-size:22px;line-height:1.35}
@@ -275,11 +316,11 @@ function home(){
   <div class="grid">${cards}</div>
   ${voiceTried&&!VOICE?'<div class="banner">이 기기에서 중국어 음성을 찾지 못했어요. 「선생님께」의 음성 안내를 확인해 주세요.</div>':''}
   <div class="foot"><button class="btn dark" id="teach"><span class="two">📺 수업 모드<small>课堂模式</small></span></button><button class="btn" id="about"><span class="two">선생님께<small>老师说明</small></span></button></div>
-  <p class="credit">기획·제작 <b>진담중국어</b> · 진심을 담은 중국어</p>`;
+  <p class="credit"><b>吴迪</b> 선생님 × <b>진담중국어 전진아</b> 선생님</p>`;
   $app.querySelectorAll('.lcard').forEach(b=>b.onclick=()=>go(lesson,+b.dataset.n));
   document.getElementById('snd').onclick=()=>{S.sound=!S.sound;save();home()};
   document.getElementById('teach').onclick=()=>go(teach,16,0);
-  document.getElementById('about').onclick=()=>go(about);
+  document.getElementById('about').onclick=()=>openModal('guide');
 }
 // ---------- LESSON ----------
 function lesson(n){
@@ -535,65 +576,89 @@ function teach(n,deck){
   cleanup=()=>{document.removeEventListener('keydown',key);clearInterval(cdTimer)};
   build();draw();
 }
-// ---------- 선생님께 / 老师说明 (이중 언어) ----------
-let aboutLang='ko';
-try{aboutLang=localStorage.getItem(KEY+'_lang')||'ko'}catch(e){}
-const ABOUT={
-ko:`<h2>교수님, 이 게임은 이렇게 만들었습니다</h2>
-  <p>《汉语口语速成 입문편(하)》 16~30과를 배우는 학생들이 <b>배운 표현을 1초 안에 말로 꺼낼 수 있도록</b> 만든 수업 보조 게임입니다. 각 과의 단어와 문법 포인트를 그대로 따르고, 그 위에 진담중국어의 <b>덩어리훈련™ 4단계</b>를 얹었습니다.</p>
-  <h3>덩어리훈련™ 4단계</h3>
-  <ol><li><b>짝꿍어휘</b> — 단어를 혼자 외우지 않고, 함께 쓰이는 말과 한 덩어리로 익힙니다. (排队交钱, 买到票, 把空调关上)</li>
-  <li><b>입에 붙이기</b> — 듣고 따라 하기 → 한자만 보고 말하기 → 뜻만 보고 말하기, 한 덩어리를 세 번 말합니다.</li>
-  <li><b>내 문장</b> — 과의 핵심 문형으로 문장을 조립한 뒤, 학생 자신의 이야기로 바꿔 말합니다.</li>
-  <li><b>즉시반응</b> — 질문을 듣고 제한시간 안에 알맞은 대답을 고릅니다. 빨리 맞히면 「툭!」 보너스가 붙습니다.</li></ol>
-  <h3>수업에서 이렇게 써 보세요</h3>
-  <ul><li><b>수업 시작 5분</b> — 수업 모드 「짝꿍어휘」를 띄우고, 한국어를 보면 반 전체가 중국어로 말합니다.</li>
-  <li><b>문법 설명 직후</b> — 수업 모드 「문장」으로 한국어 → 중국어 바꿔 말하기를 합니다.</li>
-  <li><b>회화 연습</b> — 「질문→대답」은 선생님이 질문을 읽고 학생이 바로 대답하는 형식으로 씁니다.</li>
-  <li><b>복습 숙제</b> — 학생들이 휴대폰으로 각 과의 4단계를 끝내고 도장 4개를 모아 옵니다.</li></ul>
-  <h3>중국에서 사용할 때</h3>
-  <ul><li>크롬이 없어도 됩니다. 아이폰은 사파리, 갤럭시는 삼성 인터넷, 노트북은 엣지 등 어떤 브라우저로도 열립니다.</li>
-  <li>위챗·카카오톡 안에서 열면 소리가 안 날 수 있습니다. 오른쪽 위 ⋯ → 「브라우저로 열기」를 눌러 주세요.</li>
-  <li>한 번 열어 두면 인터넷이 없어도 실행됩니다. 「홈 화면에 추가」하면 앱처럼 쓸 수 있습니다.</li>
-  <li>발음은 기기에 내장된 중국어 음성으로 나옵니다. 갤럭시는 출국 전 <b>설정 → 일반 → 텍스트 음성 변환</b>에서 중국어 음성 데이터를 받아 두면 좋습니다.</li>
-  <li>학습 기록과 도장은 각자의 휴대폰에 저장됩니다.</li></ul>
-  <p style="font-size:15px;color:var(--muted)">단어와 문법 범위는 《汉语口语速成 입문편(하)》 각 과를 기준으로 했고, 짝꿍어휘·예문·질문은 말하기 연습을 위해 진담중국어가 새로 만들었습니다. 교재 출판사와 관계없는 비공식 수업 보조 자료입니다.</p>
-  <div class="sig"><b>진담중국어</b> · 진심을 담은 중국어<br>아웃풋에 진심, 배운 중국어가 1초 안에 툭!<br>기획·제작 전진아 (중국어교육 석사)</div>`,
-zh:`<h2>老师使用说明</h2>
-  <p>这是配合《汉语口语速成·入门篇(下)》第16–30课的口语练习游戏。目标只有一个：<b>学生学过的中文，一秒钟内说出来。</b>每课的词汇和语法与教材一致，练习方法采用진담중국어（Jindam Chinese）的<b>“词块训练™”四个步骤</b>。学生是韩国人，所以题目里的意思用韩语表示。</p>
-  <h3>四个步骤</h3>
-  <ol><li><b>搭配词</b>（짝꿍어휘）— 看韩语意思，选出空格里的词。不单记一个词，而是把常用搭配记成一块。（排队交钱、买到票、把空调关上）</li>
-  <li><b>说顺口</b>（입에 붙이기）— 每个词块说三遍：听了跟读 → 只看汉字说 → 只看韩语意思说。</li>
-  <li><b>我的句子</b>（내 문장）— 把词块排成正确的句子，然后换成自己的情况说一说。</li>
-  <li><b>即时反应</b>（즉시반응）— 听问题，在15秒内选出合适的回答。回答得快有“툭!”奖励。</li></ol>
-  <h3>课堂模式怎么用</h3>
-  <ol><li>在首页点 <b>“📺 수업 모드 · 课堂模式”</b>，电脑连接投影仪。</li>
-  <li>上方选择课数（第16课…第30课）和内容：<b>搭配 / 句子 / 问答 / 我的句子</b>。</li>
-  <li>屏幕先出现韩语意思（问答是中文问题）。请全班<b>先用中文说出来</b>，再按 <b>“显示答案”</b>。</li>
-  <li>键盘：<b>空格键</b>或<b>→</b> 显示答案/下一个，<b>←</b> 上一个。点 <b>“🔊 听”</b> 播放发音。</li>
-  <li>打开 <b>“倒计时”</b>，3秒后自动显示答案。<b>“随机”</b>可以打乱顺序。</li></ol>
-  <h3>上课建议</h3>
-  <ul><li><b>上课前5分钟</b>：用“搭配”热身，学生看韩语马上说中文。</li>
-  <li><b>讲完语法以后</b>：用“句子”做韩译中口头练习。</li>
-  <li><b>会话练习</b>：用“问答”，老师提问，学生马上回答。</li>
-  <li><b>课后作业</b>：学生用手机完成每课四个步骤，集齐4个印章。</li></ul>
-  <h3>在中国使用</h3>
-  <ul><li>不需要Chrome。iPhone用Safari，三星手机用三星浏览器，电脑用Edge等，任何浏览器都可以打开。</li>
-  <li>在微信或KakaoTalk里打开可能没有声音，请点右上角 ⋯ → “在浏览器打开”。</li>
-  <li>第一次打开以后，没有网络也能使用。可以“添加到主屏幕”，像App一样使用。</li>
-  <li>发音使用手机或电脑自带的中文语音。如果没有声音，请在系统设置里下载中文语音。</li>
-  <li>学习记录保存在学生各自的手机里。</li></ul>
-  <p style="font-size:15px;color:var(--muted)">词汇和语法范围依据教材各课；搭配、例句和问题由진담중국어为口语练习编写。本资料与出版社无关，是非官方的课堂辅助材料。</p>
-  <div class="sig"><b>진담중국어 · Jindam Chinese</b><br>学过的中文，一秒说出来！<br>策划·制作：전진아 Jina老师（中文教育硕士）</div>`};
-function about(){
-  $app.innerHTML=topbar(true)+`<div class="row"><div class="seg" role="group" aria-label="언어 语言">
-    <button data-lang="ko" aria-pressed="${aboutLang==='ko'}">한국어</button><button data-lang="zh" aria-pressed="${aboutLang==='zh'}">中文</button></div></div>
-  <div class="fill"><div class="doc" lang="${aboutLang==='zh'?'zh-CN':'ko'}">${ABOUT[aboutLang]}</div></div>`;
-  bindBack(home);
-  $app.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{aboutLang=b.dataset.lang;try{localStorage.setItem(KEY+'_lang',aboutLang)}catch(e){}about()});
+// ---------- 소개 팝업 + 선생님 안내 (한국어 / 中文) ----------
+let LANG='ko';
+try{LANG=localStorage.getItem(KEY+'_lang')||'ko'}catch(e){}
+const T={
+ko:{start:'시작하기 ▶',guide:'선생님 안내',back:'← 소개로',close:'닫기',
+  lead:'<b>吴迪</b> 선생님과<br><b>진담중국어 전진아</b> 선생님이<br>함께 만들었습니다.',
+  m1:['吴迪','우디 선생님'],m2:['전진아','진담중국어'],
+  tag:'배운 중국어가 <em>1초 안에 툭!</em>',
+  steps:['짝꿍어휘','입에 붙이기','내 문장','즉시반응'],
+  book:'汉语口语速成 입문편(하) 16~30과'},
+zh:{start:'开始 ▶',guide:'老师说明',back:'← 返回',close:'关闭',
+  lead:'本游戏由 <b>吴迪老师</b> 和<br><b>진담중국어 Jina（전진아）老师</b> 共同制作。',
+  m1:['吴迪','Wú Dí 老师'],m2:['Jina','전진아 老师'],
+  tag:'学过的中文，<em>一秒说出来！</em>',
+  steps:['搭配词','说顺口','我的句子','即时反应'],
+  book:'汉语口语速成·入门篇(下) 第16–30课'}};
+const GUIDE={
+ko:{title:'선생님 안내',
+  intro:'《汉语口语速成 입문편(하)》 16~30과를 배우는 학생들이 <b>배운 표현을 1초 안에 말로 꺼낼 수 있도록</b> 만든 수업 보조 게임입니다. 각 과의 단어·문법 범위를 그대로 따르고, 진담중국어의 <b>덩어리훈련™ 4단계</b>로 연습합니다.',
+  stepsH:'덩어리훈련™ 4단계',
+  steps:[['짝꿍어휘','함께 쓰이는 말을 한 덩어리로 맞힙니다. 排队交钱, 买到票'],['입에 붙이기','듣고 따라 → 한자만 보고 → 뜻만 보고, 세 번 말합니다.'],['내 문장','문형으로 문장을 조립하고, 내 이야기로 바꿔 말합니다.'],['즉시반응','질문을 듣고 15초 안에 대답을 고릅니다. 빠르면 「툭!」 보너스.']],
+  classH:'수업 모드 사용법',
+  cls:['홈에서 <b>📺 수업 모드</b>를 누르고 노트북을 프로젝터에 연결합니다.','위에서 과와 자료(짝꿍어휘·문장·질문→대답·내 문장)를 고릅니다.','화면의 한국어를 보고 <b>반 전체가 먼저 중국어로 말한 뒤</b> 「정답 공개」를 누릅니다.','키보드: 스페이스·→ 공개/다음, ← 이전. 3초 카운트는 필요할 때만 켭니다.'],
+  useH:'이렇게 활용해 보세요',
+  use:[['수업 시작 5분','짝꿍어휘로 입 풀기'],['문법 설명 후','문장으로 한→중 바꿔 말하기'],['회화 시간','질문→대답으로 즉시 응답'],['복습 숙제','휴대폰으로 4단계, 도장 4개 모으기']],
+  chinaH:'중국에서 사용할 때',
+  china:['크롬이 없어도 됩니다. 사파리, 삼성 인터넷, 엣지 등 어떤 브라우저든 열립니다.','위챗·카카오톡 안에서는 소리가 안 날 수 있어요. ⋯ → 「브라우저로 열기」.','한 번 열면 인터넷 없이도 실행됩니다. 「홈 화면에 추가」하면 앱처럼 쓸 수 있어요.','발음은 기기 내장 중국어 음성을 씁니다. 갤럭시는 텍스트 음성 변환에서 중국어 음성을 받아 두세요.'],
+  note:'단어·문법 범위는 교재 각 과 기준이며, 짝꿍어휘·예문·질문은 말하기 연습을 위해 새로 만들었습니다. 출판사와 관계없는 비공식 수업 보조 자료입니다.',
+  sig:'<b>吴迪</b> 선생님 × <b>진담중국어 전진아</b> 선생님<br>진심을 담은 중국어 · 아웃풋에 진심'},
+zh:{title:'老师说明',
+  intro:'这是配合《汉语口语速成·入门篇(下)》第16–30课的口语练习游戏，目标是让学生<b>学过的中文，一秒钟内说出来</b>。词汇和语法范围与教材一致，用진담중국어的<b>“词块训练™”四个步骤</b>练习。学生是韩国人，所以题目中的意思用韩语表示。',
+  stepsH:'词块训练™ 四个步骤',
+  steps:[['搭配词','看韩语意思，选出空格里的词，把常用搭配记成一块。排队交钱、买到票'],['说顺口','每个词块说三遍：跟读 → 只看汉字 → 只看韩语意思。'],['我的句子','把词块排成句子，再换成自己的情况说一说。'],['即时反应','听问题，15秒内选出合适的回答。答得快有“툭!”奖励。']],
+  classH:'课堂模式怎么用',
+  cls:['在首页点 <b>📺 课堂模式</b>，电脑连接投影仪。','上方选择课数和内容：搭配 / 句子 / 问答 / 我的句子。','屏幕先出现韩语意思，请<b>全班先用中文说出来</b>，再按“显示答案”。','键盘：空格键或 → 显示答案/下一个，← 上一个。需要时打开“倒计时”。'],
+  useH:'上课建议',
+  use:[['上课前5分钟','用“搭配”热身'],['讲完语法以后','用“句子”做韩译中'],['会话练习','用“问答”马上回答'],['课后作业','用手机完成四个步骤，集齐4个印章']],
+  chinaH:'在中国使用',
+  china:['不需要Chrome。Safari、三星浏览器、Edge等任何浏览器都可以打开。','在微信或KakaoTalk里打开可能没有声音，请点 ⋯ →“在浏览器打开”。','第一次打开后，没有网络也能使用；可以“添加到主屏幕”，像App一样使用。','发音使用设备自带的中文语音。如果没有声音，请在系统设置里下载中文语音。'],
+  note:'词汇和语法范围依据教材各课；搭配、例句和问题为口语练习新编写。本资料与出版社无关，是非官方课堂辅助材料。',
+  sig:'<b>吴迪老师</b> × <b>진담중국어 Jina（전진아）老师</b><br>用真心教中文 · 重在开口说'}};
+function openModal(view){
+  const old=document.getElementById('modal');if(old)old.remove();
+  const m=document.createElement('div');m.id='modal';m.className='modal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');
+  document.body.appendChild(m);
+  const close=()=>{m.remove();document.removeEventListener('keydown',onKey)};
+  const onKey=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',onKey);
+  function paint(){
+    const t=T[LANG],g=GUIDE[LANG];
+    const head=`<div class="sheet-h">${view==='guide'?`<button class="pill" id="mback">${t.back}</button>`:'<span class="sheet-brand">덩어리 <b>툭!</b></span>'}
+      <div class="seg" role="group" aria-label="언어 语言"><button data-lang="ko" aria-pressed="${LANG==='ko'}">한국어</button><button data-lang="zh" aria-pressed="${LANG==='zh'}">中文</button></div></div>`;
+    let body,foot;
+    if(view==='intro'){
+      body=`<div class="intro" lang="${LANG==='zh'?'zh-CN':'ko'}">
+        <div class="iseal" aria-hidden="true">툭!</div>
+        <p class="ibook zh">${t.book}</p>
+        <p class="ilead">${t.lead}</p>
+        <div class="makers"><div class="maker"><b class="zh">${t.m1[0]}</b><span>${t.m1[1]}</span></div><span class="mx">×</span><div class="maker"><b>${t.m2[0]}</b><span>${t.m2[1]}</span></div></div>
+        <p class="itag">${t.tag}</p>
+        <ol class="isteps">${t.steps.map((x,i)=>`<li><span>${i+1}</span>${x}</li>`).join('')}</ol></div>`;
+      foot=`<div class="sheet-f"><button class="btn" id="mguide">${t.guide}</button><button class="btn primary" id="mstart">${t.start}</button></div>`;
+    }else{
+      body=`<div class="guide" lang="${LANG==='zh'?'zh-CN':'ko'}">
+        <h2>${g.title}</h2><p>${g.intro}</p>
+        <h3>${g.stepsH}</h3><div class="gsteps">${g.steps.map((x,i)=>`<div><span class="gn">${i+1}</span><b>${x[0]}</b><p>${x[1]}</p></div>`).join('')}</div>
+        <h3>${g.classH}</h3><ol class="glist">${g.cls.map(x=>`<li>${x}</li>`).join('')}</ol>
+        <h3>${g.useH}</h3><div class="guse">${g.use.map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
+        <h3>${g.chinaH}</h3><ul class="glist">${g.china.map(x=>`<li>${x}</li>`).join('')}</ul>
+        <p class="gnote">${g.note}</p><div class="gsig">${g.sig}</div></div>`;
+      foot=`<div class="sheet-f one"><button class="btn primary" id="mstart">${view==='guide'&&!m.dataset.fromIntro?t.close:t.start}</button></div>`;
+    }
+    m.innerHTML=`<div class="sheet">${head}<div class="sheet-b">${body}</div>${foot}</div>`;
+    m.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;try{localStorage.setItem(KEY+'_lang',LANG)}catch(e){}paint()});
+    const gb=m.querySelector('#mguide');if(gb)gb.onclick=()=>{view='guide';m.dataset.fromIntro='1';paint()};
+    const bb=m.querySelector('#mback');if(bb)bb.onclick=()=>{view='intro';paint()};
+    m.querySelector('#mstart').onclick=close;
+  }
+  paint();
 }
+function about(){openModal('guide')}
 // ---------- boot ----------
 go(home);
+openModal('intro');
 setTimeout(()=>{if(document.querySelector('.lcard'))home()},1200); // 음성 목록이 늦게 로드되는 기기 대응
 })();
 </script>
